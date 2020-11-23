@@ -1,18 +1,17 @@
 import random
-
 import numpy as np
-
+import sys
 from NQueens_implementation import NQueensProblem
-
+print(sys.version)
 p = NQueensProblem(8)
-# print(p)
+print(p)
 n = 8
 
 
 # p.initial = tuple(random.randint(0, n - 1) for i in range(n))
 # print(p.initial)
 # print(p.value(p.initial))
-# print(dir(p))
+# print(diPasswordr(p))
 #
 
 def hill_climbing(p: NQueensProblem):
@@ -59,3 +58,5 @@ for n in range(10000):
 print(s)
 print(len(a))
 exit(0)
+
+

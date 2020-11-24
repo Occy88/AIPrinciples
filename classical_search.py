@@ -10,7 +10,7 @@ VISITED_CELL_SYMBOL = 'V'
 EXPANDED_NOT_VISITED_CELL_SYMBOL = 'E'
 EMPTY_SYMBOL = ' '
 
-print_rate_per_sec = 1.0
+print_rate_per_sec = 0.2
 agent_coord = [1, 3]
 goal_coord = [4, 7]
 initial_map = [
@@ -52,58 +52,37 @@ def valid_cell(row, col):
 
 # ASSUMING POS+[COL,ROW]: column is right left, row is up down
 
-L, LU, U, RU, R, RD, D, LD = [-1, 0], [-1, 1], [0, 1], [0, 1], [1, 0], [1,-1], [-1, -1], [-1, -1]
+L, LU, U, RU, R, RD, D, LD = [-1, 0], [-1, 1], [0, 1], [0, 1], [1, 0], [1, -1], [0, -1], [-1, -1]
+adj = (L, U, R, D)
+diag = (LU, RU, RD, LD)
+adj_diag = adj + diag
+
 
 # can't use numpy so a couple extra function to make life easier:
 def s(p1, p2):
     return [p1[0] + p2[0], p1[1] + p2[1]]
 
 
-def generate_adjacent_cells(y: int, x: int, diag=False):
-    # agent_row is the row where currently the agent is
-    # agent_col is the column where currently the agent is
-    l = [[-1, 0], [1, 0], [0, 1], [0, -1], [1, -1], [1, 1], [-1, 1], [-1, -1]]
-    # Calculate the position of adjacent cells around the agent for later exploration by DFS or BFS.
-    # left_of_agent_row= agent_row
-    # left_of_agent_col = agent_col -1
-    # ...
-    # ...
-
-    # diagonal move support
-    # ...
-    # ...
-
-    # Defining the order of adjacent cells expanding by the agent for BFS and DFS algorithms.
-    # Use "append" method. i.e. adjacent_cells_row.append(left_of_agent_row)
-    adjacent_cells_row = []
-    adjacent_cells_col = []
-
-    # adjacent_cells_row.append(...)
-    # adjacent_cells_col.append(...)
-
-    return [adjacent_cells_row, adjacent_cells_col]  # returning the list of genereted adjacent cells for DFS and BFS
+def generate_adjacent_cells(y: int, x: int, cells=adj):
+    return list(s(cell, [y, x]) for cell in cells if valid_cell(*s(cell, [y, x])))
 
 
-def BFS(agent_start_row, agent_start_col):
-    # Add the initial position of the agent to queue
-    Q = queue.Queue()
-    Q.put([agent_start_row, agent_start_col])
-
-    while not Q.empty():
-        Q.
-        pass
-
-    # Retrieve the head of queue as the next position of the agent to explore
-
-    # Set the status of the cell as the agent is there
-
-    # Check whether the agent has found the goal
-
-    # Calculate the position of agent adjacent cells for exploration
-
-    # check if the adjacent cells are valid (not wall and not visited before) and add them to the queue for further search
-
-    # Set the current status of the agent cell to visited
+def BFS(y, x):
+    q = queue.Queue()
+    q.put([y, x])
+    while not q.empty():
+        potential = q.get()
+        if goal_coord == potential:
+            current_map[potential[0]][potential[1]] = AGENT_SYMBOL
+            print_map()
+            return True
+        current_map[potential[0]][potential[1]] = VISITED_CELL_SYMBOL
+        expand = generate_adjacent_cells(*potential)
+        list = [q.put(cell) for cell in expand]
+        for cell in expand:
+            current_map[cell[0]][cell[1]] = EXPANDED_NOT_VISITED_CELL_SYMBOL
+        print_map()
+        time.sleep(print_rate_per_sec)
 
     return False
 
@@ -115,7 +94,10 @@ def DFS(agent_row, agent_col):
         return True
 
     # Calculate the position of agent adjacent cells for exploration
-    adjacent_cells = generate_adjacent_cells(agent_row, agent_col)
+    # quick transpose as I prefer the generate adjacent cells function remains how it is (list of coords)
+    adjacent_cells = list(map(list, zip(*generate_adjacent_cells(agent_row, agent_col))))
+    if len(adjacent_cells) == 0:
+        return False
     adjacent_cells_row = adjacent_cells[0]
     adjacent_cells_col = adjacent_cells[1]
 

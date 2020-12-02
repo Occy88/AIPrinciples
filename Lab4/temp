@@ -1,0 +1,195 @@
+; ** Constraints for top left square **
+; TODO constraints for 1b.
+; cells whose values are already specified must be assigned to the respective values.
+(assert (and ( = (Board x0 y0)  6) ( = (Board x0 y2)  2) ( = (Board x2 y2)  4) ( = (Board x2 y1)  9)))
+;;;;;; --- END-CONSTRAINTS-1a ---
+
+;;;;;; --- BEGIN-CONSTRAINTS-2 ---
+
+; ** Constraints for top middle square **
+; TODO constraints for 2.
+(assert
+    (and
+        (or
+              (= (+(Board x3 y0) 1) (Board x4 y0) )
+              (= (+(Board x5 y0) 1) (Board x4 y0) )
+        )
+        (or
+            (= (+(Board x3 y0) 1) (Board x3 y1) )
+            (= (+(Board x3 y2) 1) (Board x3 y1) )
+        )
+        (or
+            (= (+(Board x5 y0) 1) (Board x5 y1) )
+            (= (+(Board x5 y2) 1) (Board x5 y1) )
+
+        )
+        (or
+            (= (+(Board x5 y2) 1) (Board x4 y2) )
+            (= (+(Board x3 y2) 1) (Board x4 y2) )
+        )
+    )
+)
+
+;;;;;; --- END-CONSTRAINTS-2 ---
+
+
+
+;;;;;; --- BEGIN-CONSTRAINTS-3 ---
+
+; ** Constraints for top right square **
+; TODO constraints for 3.
+(assert
+    (and
+          (=
+                (* (Board x7 y1) 2)
+                (+
+                    (Board x7 y0)
+                    (Board x7 y2)
+                    (Board x6 y1)
+                    (Board x8 y1)
+                )
+          )
+    )
+)
+;;;;;; --- END-CONSTRAINTS-3 ---
+
+
+
+;;;;;; --- BEGIN-CONSTRAINTS-4 ---
+
+; ** Constraints for middle left square **
+; TODO constraints for 4.
+(assert
+    (and
+          (=
+                13
+                (+
+                    (Board x1 y3)
+                    (Board x2 y3)
+                )
+          )
+          (=
+                2
+                (/
+                    (Board x0 y5)
+                    (Board x0 y4)
+                )
+          )
+          (=
+                4
+                (-
+                    (Board x2 y5)
+                    (Board x2 y4)
+                )
+          )
+    )
+)
+
+
+;;;;;; --- END-CONSTRAINTS-4 ---
+
+
+
+;;;;;; --- BEGIN-CONSTRAINTS-5 ---
+; ** Constraints for center square **
+(assert
+    (and
+          (>
+                (Board x3 y3)
+                (Board x3 y4)
+                (Board x3 y5)
+          )
+          (>
+                (Board x4 y3)
+                (Board x4 y4)
+                (Board x4 y5)
+          )
+          (>
+                (Board x5 y3)
+                (Board x5 y4)
+                (Board x5 y5)
+          )
+    )
+)
+
+
+;;;;;; --- END-CONSTRAINTS-5 ---
+
+
+
+;;;;;; --- BEGIN-CONSTRAINTS-6 ---
+
+; ** Constraints for middle right square **
+; Only need to make sure sum is 1 to satisfy all conditions.
+(assert
+      (= 1 (+
+            (ite (< 5 (Board x7 y3) ) 1 0)
+            (ite (< 5 (Board x7 y5) ) 1 0)
+            (ite (< 5 (Board x6 y4) ) 1 0)
+            (ite (< 5 (Board x6 y4) ) 1 0)
+            )
+      )
+)
+;;;;;; --- END-CONSTRAINTS-6 ---
+
+
+
+;;;;;; --- BEGIN-CONSTRAINTS-7 ---
+
+; ** Constraints for bottom left square **
+; TODO constraints for 7.
+(assert
+      (=   (+
+                (Board x0 y6)
+                (Board x1 y6)
+                (Board x2 y6)
+            )
+            (+
+                (Board x0 y7)
+                (Board x1 y7)
+                (Board x2 y7)
+            )
+            (+
+                (Board x0 y8)
+                (Board x1 y8)
+                (Board x2 y8)
+            )
+      )
+)
+
+
+;;;;;; --- END-CONSTRAINTS-7 ---
+
+
+
+;;;;;; --- BEGIN-CONSTRAINTS-8 ---
+
+; ** Constraints for bottom middle square **
+(assert
+      (=    3
+
+            (ite (= 1  (mod (*
+                                (+
+                                    (Board x3 y6)
+                                    (Board x3 y7)
+                                    (Board x3 y8)
+                                )
+                                (+
+                                    (Board x5 y6)
+                                    (Board x5 y7)
+                                    (Board x5 y8)
+                                )
+                            ) 2
+                         )
+                  ) 3 0
+
+            )
+
+            (+
+                (Board x4 y7)
+                (Board x4 y8)
+            )
+      )
+)
+
+;;;;;; --- END-CONSTRAINTS-8 ---

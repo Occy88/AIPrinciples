@@ -681,8 +681,6 @@ if __name__ == "__main__":
 
     t = time.time()
     h = globals()["%sHeuristic" % args.heuristic](grid)
-    h = ManhattanSumHeuristic(grid)
-    print(h)
     result = astar_search(grid, h, None if args.benchmarking else 1.0 / 100)
     print("")
 

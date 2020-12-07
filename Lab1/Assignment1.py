@@ -1,7 +1,7 @@
 import random
 import numpy as np
 import sys
-from NQueens_implementation import NQueensProblem
+from FinalProject.NQueens_implementation import NQueensProblem
 print(sys.version)
 p = NQueensProblem(8)
 print(p)

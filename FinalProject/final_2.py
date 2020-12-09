@@ -266,6 +266,28 @@ class Hanoi(Domain):
                 print('', end='||')
             print('')
 
+    @staticmethod
+    def heuristic_1(self):
+        """
+        THIS HEURISTIC ASSUES THAT ALL DISKS ARE PRESENT IN INCREMENTAL SIZE
+        Simple heuristic (admissible)
+        Assumes the target goal is all disks mounted on last peg.
+        sum of:
+        num disks not on goal peg (rationale: at least one move to get there for each disk)
+        2 * num disks on goal peg of incorrect size (rationale: at least two moves (need to get out the way))
+
+        """
+        # number not on goal is height of goal peg - number on peg
+        total_correct = 0
+        total_incorrect = 0
+        # assume that disks stacked incremental height on goal. [5,4,3,2,1,0]
+        for i, d in enumerate(self[-1].disks):
+            # print("disk v: ", d.v, ", self.h: ", self[-1].h)
+            if d.v < self[-1].h - i:
+                total_incorrect += 1
+            else:
+                total_correct += 1
+        return (self[-1].h - total_correct) + 2 * total_incorrect
 
     @staticmethod
     def heuristic_on_goal(self):
@@ -282,7 +304,7 @@ class Hanoi(Domain):
         # print(total_incorrect)
         return self[-1].h - total_correct
 
-    def heuristic_blind(self):
+    def heuristic_2_blind(self):
         """
         My second admissible heuristic (blind heuristic)
         """
@@ -397,9 +419,9 @@ def main():
     #     c.print_ascii()
     # heapq.heappop(st).print_ascii()
     # exit(0)
-    for ind, h in enumerate(( Hanoi.heuristic_blind, Hanoi.heuristic_on_goal)):
+    for ind, h in enumerate((Hanoi.heuristic_1, Hanoi.heuristic_2_blind, Hanoi.heuristic_on_goal)):
         times[h.__name__] = []
-        for n in range(2, 13):
+        for n in range(2, 10):
             MOVE_NUMBER = 0
             # print("HEURISTIC: ", h.__name__)
             t = time.time()

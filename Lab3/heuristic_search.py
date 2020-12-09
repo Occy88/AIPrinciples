@@ -681,6 +681,7 @@ if __name__ == "__main__":
 
     t = time.time()
     h = globals()["%sHeuristic" % args.heuristic](grid)
+    h = CallMeFancyHeuristic(grid)
     result = astar_search(grid, h, None if args.benchmarking else 1.0 / 100)
     print("")
 

@@ -1,6 +1,5 @@
 import pddlpy
-
-p = pddlpy.DomainProblem('hanoi_domain.pddl', 'hanoi_problem.pddl')
+p = pddlpy.DomainProblem('depotsstrips/Depots.pddl', 'depotsstrips/pfile1')
 print(p)
 print('=========ops=======')
 for o in p.operators():

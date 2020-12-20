@@ -47,6 +47,7 @@ class DomainListener(pddlListener):
 
     def enterTypedVariableList(self, ctx):
         # print("-> tvar")
+        # TODO supersets
         for v in ctx.VARIABLE():
             vname = v.getText()
             self.scopes[-1].variable_list[v.getText()] = None
@@ -111,6 +112,8 @@ class DomainListener(pddlListener):
 
     def enterTypedNameList(self, ctx):
         # print("-> tnam")
+        # TODO super sets of object types
+        print(ctx)
         for v in ctx.name():
             vname = v.getText()
             self.scopes[-1].variable_list[v.getText()] = None

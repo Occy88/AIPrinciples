@@ -79,7 +79,7 @@ domain
 
 domainName
     : '(' 'domain' name ')'
-    ;
+    ; 
 
 requireDef
 	: '(' ':requirements' REQUIRE_KEY+ ')'

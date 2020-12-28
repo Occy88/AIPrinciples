@@ -1,0 +1,3 @@
+ff planner fails, switches to bfs which is slow for some plans (very slow) hence need to understand what they did?
+need to figure out how to convert output form ff to a plan trace
+

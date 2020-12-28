@@ -79,13 +79,14 @@ domain
 
 domainName
     : '(' 'domain' name ')'
-    ; 
+    ;
 
 requireDef
 	: '(' ':requirements' REQUIRE_KEY+ ')'
 	;
 
 typesDef
+
 	: '(' ':types' typedNameList ')'
 	;
 

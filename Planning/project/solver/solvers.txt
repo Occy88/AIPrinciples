@@ -1,0 +1,2 @@
+opensource:
+cloud_server -> exec "$(dirname "$0")"/siw-then-bfsf --domain $1 --problem $2 --output $3

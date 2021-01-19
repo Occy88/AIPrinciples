@@ -1,0 +1,12 @@
+step    0: MOVE-B-TO-T B7 B5
+        1: MOVE-B-TO-T B3 B4
+        2: MOVE-T-TO-B B1 B2
+        3: MOVE-B-TO-B B6 B8 B3
+        4: MOVE-T-TO-B B4 B6
+        5: MOVE-B-TO-B B9 B10 B4
+        6: MOVE-T-TO-B B7 B10
+        7: MOVE-T-TO-B B5 B7
+        8: MOVE-T-TO-B B8 B5
+     
+
+time spent:    0.00 seconds instantiating 1200 easy, 0 hard action templates

@@ -1,0 +1,1 @@
+[["MOVE-B-TO-B", ["B10", "B1", "B2"]], ["MOVE-B-TO-T", ["B4", "B5"]], ["MOVE-B-TO-B", ["B1", "B8", "B4"]], ["MOVE-B-TO-T", ["B5", "B6"]], ["MOVE-B-TO-T", ["B6", "B9"]], ["MOVE-B-TO-B", ["B9", "B7", "B1"]], ["MOVE-T-TO-B", ["B5", "B9"]], ["MOVE-T-TO-B", ["B7", "B3"]], ["MOVE-T-TO-B", ["B8", "B5"]], ["MOVE-T-TO-B", ["B6", "B8"]], ["MOVE-B-TO-B", ["B10", "B2", "B7"]]]

@@ -8,7 +8,7 @@ class PddlToJson(Transformer):
         domain = args[0]
         predicates = args[1]
         actions = args[2:]
-        return {'domain': args[0], 'predicates': predicates, 'actions': actions}
+        return {'domain': domain, 'predicates': predicates, 'actions': actions}
 
     def string(self, s):
         return s
@@ -19,7 +19,7 @@ class PddlToJson(Transformer):
     def predicate(self, args):
         name = args[0][0].value
         vals = frozenset(tuple(args[1:]))
-        p = frozenset({name, vals})
+        p = {'name': name, 'args': vals}
         return p
 
     def var(self, v):
@@ -37,18 +37,20 @@ class PddlToJson(Transformer):
         return {'name': name[0].value, 'params': parameters, 'pre': precondition, 'effect': effect}
 
     def effect(self, p_set):
-        negative = set()
-        positive = set()
+        negative = list()
+        positive = list()
         for p in p_set:
             try:
                 if p.data == 'n_predicate':
-                    negative.add(frozenset(p.children))
+                    negative += (p.children)
             except Exception as e:
-                positive.add(p)
+                positive.append(p)
             print(p)
         return {'positive': positive, 'negative': negative}
 
-    precondition = set
+    def precondition(self, args):
+        return args
+
     number = v_args(inline=True)(float)
 
 
@@ -60,7 +62,23 @@ parser = Lark(grammar, transformer=PddlToJson(), parser="lalr")
 parsed = parser.parse(sample_conf)
 
 print(parser.parse(sample_conf))
+f = open('out.txt', 'w')
 
+
+def write_action(name, predicate):
+    p1 = '\naction('
+    p2 = ' ,t) -> '
+    return p1 + name + p2 + predicate['name'] + '('+', '.join(list(predicate['args'])) + ', t+1)'
+
+
+for a in parsed['actions']:
+    f.write("\n\npositives: ")
+    for p in a['effect']['positive']:
+        f.write(write_action(parsed['domain'], p))
+
+    f.write("\n\nnegatives: ")
+    for p in a['effect']['negative']:
+        f.write(write_action(parsed['domain'], p))
 # #
 # # $name
 # move-b-to-b
@@ -83,3 +101,31 @@ print(parser.parse(sample_conf))
 #
 #
 #
+pddl = {'domain': 'blocksworld',
+        'predicates': [{'name': 'clear', 'args': frozenset({'x'})},
+                       {'name': 'on-table', 'args': frozenset({'x'})},
+                       {'name': 'on', 'args': frozenset({'x', 'y'})}],
+        'actions': [
+            {'name': 'move-b-to-b',
+             'params': frozenset({'bf', 'bt', 'bm'}),
+             'pre': [{'name': 'clear', 'args': frozenset({'bm'})},
+                     {'name': 'clear', 'args': frozenset({'bt'})},
+                     {'name': 'on', 'args': frozenset({'bf', 'bm'})}],
+             'effect': {
+                 'positive': [{'name': 'on', 'args': frozenset({'bt', 'bm'})},
+                              {'name': 'clear', 'args': frozenset({'bf'})}],
+                 'negative': [{'name': 'clear', 'args': frozenset({'bt'})},
+                              {'name': 'on', 'args': frozenset({'bf', 'bm'})}]}},
+
+            {'name': 'move-b-to-t', 'params': frozenset({'bf', 'bm'}),
+             'pre': [{'name': 'clear', 'args': frozenset({'bm'})}, {'name': 'on', 'args': frozenset({'bf', 'bm'})}],
+             'effect': {
+                 'positive': [{'name': 'on-table', 'args': frozenset({'bm'})},
+                              {'name': 'clear', 'args': frozenset({'bf'})}],
+                 'negative': [{'name': 'on', 'args': frozenset({'bf', 'bm'})}]}},
+            {'name': 'move-t-to-b', 'params': frozenset({'bt', 'bm'}),
+             'pre': [{'name': 'clear', 'args': frozenset({'bm'})}, {'name': 'clear', 'args': frozenset({'bt'})},
+                     {'name': 'on-table', 'args': frozenset({'bm'})}],
+             'effect': {'positive': [{'name': 'on', 'args': frozenset({'bt', 'bm'})}],
+                        'negative': [{'name': 'clear', 'args': frozenset({'bt'})},
+                                     {'name': 'on-table', 'args': frozenset({'bm'})}]}}]}

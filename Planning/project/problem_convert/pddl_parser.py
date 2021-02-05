@@ -66,17 +66,21 @@ f = open('out.txt', 'w')
 
 
 def write_action(name, predicate):
-    p1 = '\naction('
-    p2 = ' ,t) -> '
-    return p1 + name + p2 + predicate['name'] + '('+', '.join(list(predicate['args'])) + ', t+1)'
+    p1 = '\n0.000000    action('
+    p2 = ' ,t) => '
+    return p1 + name + p2 + predicate['name'] + '(' + ', '.join(list(predicate['args'])) + ', t+1)'
 
+
+for p in parsed['predicates']:
+    f.write("// predicate declarations")
+    f.write('\n' + p['name'] + ' (' + ','.join(p['args']) + ')')
+f.write("\n\n// formulas: ")
 
 for a in parsed['actions']:
-    f.write("\n\npositives: ")
+    # f.write("\n\n// positives: ")
     for p in a['effect']['positive']:
         f.write(write_action(parsed['domain'], p))
-
-    f.write("\n\nnegatives: ")
+    # f.write("\n\n// negatives: ")
     for p in a['effect']['negative']:
         f.write(write_action(parsed['domain'], p))
 # #

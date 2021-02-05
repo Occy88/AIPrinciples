@@ -1,23 +1,26 @@
+// predicate declarations
+clear (x)// predicate declarations
+on-table (x)// predicate declarations
+on (y,x)
 
+// positives: 
+0.000000    action(blocksworld ,t) => on(bm, bt, t+1)
+0.000000    action(blocksworld ,t) => clear(bf, t+1)
 
-positives: 
-action(blocksworld ,t) -> on(bt, bm, t+1)
-action(blocksworld ,t) -> clear(bf, t+1)
+// negatives: 
+0.000000    action(blocksworld ,t) => clear(bt, t+1)
+0.000000    action(blocksworld ,t) => on(bm, bf, t+1)
 
-negatives: 
-action(blocksworld ,t) -> clear(bt, t+1)
-action(blocksworld ,t) -> on(bf, bm, t+1)
+// positives: 
+0.000000    action(blocksworld ,t) => on-table(bm, t+1)
+0.000000    action(blocksworld ,t) => clear(bf, t+1)
 
-positives: 
-action(blocksworld ,t) -> on-table(bm, t+1)
-action(blocksworld ,t) -> clear(bf, t+1)
+// negatives: 
+0.000000    action(blocksworld ,t) => on(bm, bf, t+1)
 
-negatives: 
-action(blocksworld ,t) -> on(bf, bm, t+1)
+// positives: 
+0.000000    action(blocksworld ,t) => on(bm, bt, t+1)
 
-positives: 
-action(blocksworld ,t) -> on(bt, bm, t+1)
-
-negatives: 
-action(blocksworld ,t) -> clear(bt, t+1)
-action(blocksworld ,t) -> on-table(bm, t+1)
+// negatives: 
+0.000000    action(blocksworld ,t) => clear(bt, t+1)
+0.000000    action(blocksworld ,t) => on-table(bm, t+1)

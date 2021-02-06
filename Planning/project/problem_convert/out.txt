@@ -1,26 +1,19 @@
 // predicate declarations
-clear (x)// predicate declarations
-on-table (x)// predicate declarations
-on (y,x)
+move-b-to-b(bm,bf,bt,t)
+move-b-to-t(bm,bf,t)
+move-t-to-b(bm,bt,t)
+clear (x,t)
+on-table (x,t)
+on (y,x,t)
 
-// positives: 
-0.000000    action(blocksworld ,t) => on(bm, bt, t+1)
-0.000000    action(blocksworld ,t) => clear(bf, t+1)
-
-// negatives: 
-0.000000    action(blocksworld ,t) => clear(bt, t+1)
-0.000000    action(blocksworld ,t) => on(bm, bf, t+1)
-
-// positives: 
-0.000000    action(blocksworld ,t) => on-table(bm, t+1)
-0.000000    action(blocksworld ,t) => clear(bf, t+1)
-
-// negatives: 
-0.000000    action(blocksworld ,t) => on(bm, bf, t+1)
-
-// positives: 
-0.000000    action(blocksworld ,t) => on(bm, bt, t+1)
-
-// negatives: 
-0.000000    action(blocksworld ,t) => clear(bt, t+1)
-0.000000    action(blocksworld ,t) => on-table(bm, t+1)
+// formulas: 
+0.000000    move-b-to-b(bm,bf,bt ,t) => on(bm, bt, t+1)
+0.000000    move-b-to-b(bm,bf,bt ,t) => clear(bf, t+1)
+0.000000    move-b-to-b(bm,bf,bt ,t) ^ ((clear ?bm t) ^ (clear ?bt t) ^ (on ?bm ?bf t)) => clear(bt, t+1)
+0.000000    move-b-to-b(bm,bf,bt ,t) => on(bm, bf, t+1)
+0.000000    move-b-to-t(bm,bf ,t) => on-table(bm, t+1)
+0.000000    move-b-to-t(bm,bf ,t) => clear(bf, t+1)
+0.000000    move-b-to-t(bm,bf ,t) => on(bm, bf, t+1)
+0.000000    move-t-to-b(bm,bt ,t) => on(bm, bt, t+1)
+0.000000    move-t-to-b(bm,bt ,t) => clear(bt, t+1)
+0.000000    move-t-to-b(bm,bt ,t) => on-table(bm, t+1)

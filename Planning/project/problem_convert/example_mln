@@ -1,0 +1,23 @@
+
+
+// predicate declarations
+color(cluster,color)
+goggles(cluster,product)
+goggles_Contact(cluster,contact)
+goggles_Logo(cluster,company)
+goggles_Product(cluster,product)
+goggles_Text(cluster,text)
+linemod(cluster,linemod)
+object(cluster,object!)
+scene(scene)
+shape(cluster,shape)
+size(cluster,size)
+
+// formulas
+0.000000    shape(?c,+?s) ^ color(?c,+?col) ^ object(?c,+?obj)
+0.000000    goggles_Logo(?c,+?comp) ^ object(?c,+?obj)
+0.000000    goggles_Text(?c,+?text) ^ object(?c,+?obj)
+0.000000    goggles(?c,+?prod) ^ object(?c,+?obj)
+0.000000    goggles_Product(?c,+?contact) ^ object(?c,+?obj)
+#unique{+?t1,+?t2}
+0.000000    scene(+?s) ^ object(?c1,+?t1) ^ object(?c2,+?t2) ^ (?c1=/=?c2)

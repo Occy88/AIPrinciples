@@ -1,0 +1,44 @@
+c4r4mel@c4r4mel:~/PycharmProjects/AIPrinciples/Planning/project/solver/FF-X$ ./ff -o ../../../../hanoi/hanoi.pddl -f ../../../../hanoi/problem-3Disks.pddl
+
+ff: parsing domain file
+domain 'HANOI' defined
+ ... done.
+ff: parsing problem file
+problem 'DISKS' defined
+ ... done.
+
+
+
+Cueing down from goal distance:    3 into depth [1][2][3]
+                                                H search space got empty !
+                                                switching to complete search space now.
+                                                [1][2][3]
+
+Enforced Hill-climbing failed !
+switching to Best-first Search now.
+
+advancing to distance :    3
+                           2
+                           1
+                           0
+
+ff: found legal plan as follows
+
+step    0: MOVE D3 D2 DESTINATION
+        1: MOVE D2 D1 AUXILLARY
+        2: MOVE D3 DESTINATION D2
+        3: MOVE D1 SOURCE DESTINATION
+        4: MOVE D3 D2 SOURCE
+        5: MOVE D2 AUXILLARY D1
+        6: MOVE D3 SOURCE D2
+
+
+time spent:    0.00 seconds instantiating 72 easy, 0 hard action templates
+               0.00 seconds reachability analysis, yielding 18 facts and 50 actions
+               0.00 seconds creating final representation with 17 relevant facts
+               0.00 seconds building connectivity graph
+               0.00 seconds searching, evaluating 33 states, to a max depth of 3
+               0.00 seconds total time
+
+
+

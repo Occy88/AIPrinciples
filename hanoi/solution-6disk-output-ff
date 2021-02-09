@@ -1,0 +1,102 @@
+c4r4mel@c4r4mel:~/PycharmProjects/AIPrinciples/Planning/project/solver/FF-X$ ./ff -o ../../../../hanoi/hanoi.pddl -f ../../../../hanoi/problem-6Disks.pddl
+
+ff: parsing domain file
+domain 'HANOI' defined
+ ... done.
+ff: parsing problem file
+problem 'DISKS' defined
+ ... done.
+
+
+
+Cueing down from goal distance:    6 into depth [1][2][3]
+                                                H search space got empty !
+                                                switching to complete search space now.
+                                                [1][2][3]
+
+Enforced Hill-climbing failed !
+switching to Best-first Search now.
+
+advancing to distance :    6
+                           5
+                           4
+                           3
+                           2
+                           1
+                           0
+
+ff: found legal plan as follows
+
+step    0: MOVE D6 D5 AUXILLARY
+        1: MOVE D5 D4 DESTINATION
+        2: MOVE D6 AUXILLARY D5
+        3: MOVE D4 D3 AUXILLARY
+        4: MOVE D6 D5 D3
+        5: MOVE D5 DESTINATION D4
+        6: MOVE D6 D3 D5
+        7: MOVE D3 D2 DESTINATION
+        8: MOVE D6 D5 D3
+        9: MOVE D5 D4 D2
+       10: MOVE D6 D3 D5
+       11: MOVE D4 AUXILLARY D3
+       12: MOVE D6 D5 AUXILLARY
+       13: MOVE D5 D2 D4
+       14: MOVE D6 AUXILLARY D5
+       15: MOVE D2 D1 AUXILLARY
+       16: MOVE D6 D5 D1
+       17: MOVE D5 D4 D2
+       18: MOVE D6 D1 D5
+       19: MOVE D4 D3 D1
+       20: MOVE D6 D5 D3
+       21: MOVE D5 D2 D4
+       22: MOVE D6 D3 D5
+       23: MOVE D3 DESTINATION D2
+       24: MOVE D6 D5 D3
+       25: MOVE D5 D4 DESTINATION
+       26: MOVE D6 D3 D5
+       27: MOVE D4 D1 D3
+       28: MOVE D6 D5 D1
+       29: MOVE D5 DESTINATION D4
+       30: MOVE D6 D1 D5
+       31: MOVE D1 SOURCE DESTINATION
+       32: MOVE D6 D5 D1
+       33: MOVE D5 D4 SOURCE
+       34: MOVE D6 D1 D5
+       35: MOVE D4 D3 D1
+       36: MOVE D6 D5 D3
+       37: MOVE D5 SOURCE D4
+       38: MOVE D6 D3 D5
+       39: MOVE D3 D2 SOURCE
+       40: MOVE D6 D5 D3
+       41: MOVE D5 D4 D2
+       42: MOVE D6 D3 D5
+       43: MOVE D4 D1 D3
+       44: MOVE D6 D5 D1
+       45: MOVE D5 D2 D4
+       46: MOVE D6 D1 D5
+       47: MOVE D2 AUXILLARY D1
+       48: MOVE D6 D5 AUXILLARY
+       49: MOVE D5 D4 D2
+       50: MOVE D6 AUXILLARY D5
+       51: MOVE D4 D3 AUXILLARY
+       52: MOVE D6 D5 D3
+       53: MOVE D5 D2 D4
+       54: MOVE D6 D3 D5
+       55: MOVE D3 SOURCE D2
+       56: MOVE D6 D5 D3
+       57: MOVE D5 D4 SOURCE
+       58: MOVE D6 D3 D5
+       59: MOVE D4 AUXILLARY D3
+       60: MOVE D6 D5 AUXILLARY
+       61: MOVE D5 SOURCE D4
+       62: MOVE D6 AUXILLARY D5
+
+
+time spent:    0.00 seconds instantiating 297 easy, 0 hard action templates
+               0.00 seconds reachability analysis, yielding 42 facts and 199 actions
+               0.00 seconds creating final representation with 41 relevant facts
+               0.00 seconds building connectivity graph
+               0.00 seconds searching, evaluating 449 states, to a max depth of 3
+               0.00 seconds total time
+
+

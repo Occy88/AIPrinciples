@@ -11,7 +11,7 @@
 
 
 
-(:action move-b-to-t-
+(:action move-b-to-t
   :parameters (?bm ?bf)
   :precondition (and (clear ?bm) (on ?bm ?bf))
   :effect (and (not (on ?bm ?bf))

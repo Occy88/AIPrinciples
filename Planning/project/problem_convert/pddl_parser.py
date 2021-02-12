@@ -2,7 +2,18 @@ import sys
 
 from lark import Lark, Transformer, v_args
 
+class Action:
+    def __init__(self,action):
+        self.pos=action['effect']['positive']
+        self.neg=action['effect']['negative']
+class State:
+    def __init__(self,state):
 
+        self.actions=state['actions']
+
+    def _set_actions(self,actions):
+        for a in actions:
+            self.actions['']
 class PddlToJson(Transformer):
     def pddl(self, args):
         domain = args[0]
@@ -52,7 +63,6 @@ class PddlToJson(Transformer):
         return args
 
     number = v_args(inline=True)(float)
-
 
 sample_conf = open('./blocksworld.pddl', 'r').read()
 grammar = open("./grammar", 'r').read()

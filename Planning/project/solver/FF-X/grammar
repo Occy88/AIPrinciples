@@ -1,0 +1,20 @@
+?start: plan
+
+plan:"step" step+ time
+
+step: number ":" predicate
+
+predicate: action_name arg+
+
+action_name: string
+arg: string
+
+time: "time" "spent:" number "seconds" "instantiating" number "easy," number "hard" "action" "templates"
+
+string :  /\w+(-\w+)*/
+
+number: /\d+(\.?\d+)?/
+
+
+%import common.WS
+%ignore WS

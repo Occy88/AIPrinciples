@@ -75,20 +75,28 @@ print(parser.parse(sample_conf))
 f = open('out.txt', 'w')
 
 
-def write_action(name, predicate):
-    p1 = '\naction('
-    p2 = ' ,t) -> '
-    return p1 + name + p2 + predicate['name'] + '('+', '.join(list(predicate['args'])) + ', t+1)'
+def write_action(name, params, predicate):
+    p1 = '\n0.000000    ' + name + '('
+    p2 = ','.join(params) + ' ,t) => '
+    return p1 + p2 + predicate['name'] + '(' + ', '.join(list(predicate['args'])) + ', t+1)'
 
+
+f.write("// predicate declarations")
 
 for a in parsed['actions']:
-    f.write("\n\npositives: ")
-    for p in a['effect']['positive']:
-        f.write(write_action(parsed['domain'], p))
+    f.write('\n' + a['name'] + '(' + ','.join(a['params']) + ',t)')
 
-    f.write("\n\nnegatives: ")
+for p in parsed['predicates']:
+    f.write('\n' + p['name'] + ' (' + ','.join(p['args']) + ',t)')
+f.write("\n\n// formulas: ")
+
+for a in parsed['actions']:
+    # f.write("\n\n// positives: ")
+    for p in a['effect']['positive']:
+        f.write(write_action(a['name'], a['params'], p))
+    # f.write("\n\n// negatives: ")
     for p in a['effect']['negative']:
-        f.write(write_action(parsed['domain'], p))
+        f.write(write_action(a['name'], a['params'], p))
 # #
 # # $name
 # move-b-to-b

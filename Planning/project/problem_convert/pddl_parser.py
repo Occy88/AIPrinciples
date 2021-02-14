@@ -2,10 +2,11 @@ import sys
 
 from lark import Lark, Transformer, v_args
 from Planning.project.generator.state_to_json import parse_state
+from Planning.project.solver.ffx.plan_to_json import parse_plan
 
 
 class Predicate:
-    def __init__(self, name, args):
+    def __init__(self, name='', args='9'):
         self.name = name
         self.args = args
 
@@ -14,8 +15,10 @@ class Predicate:
 
     def __hash__(self):
         return hash(self.name + str(self.args))
+
     def __eq__(self, other):
-        return hash(self)==hash(other)
+        return hash(self) == hash(other)
+
     def __str__(self):
         return " ".join((self.name, ": ", " ".join(self.args)))
 
@@ -23,13 +26,13 @@ class Predicate:
 class Action:
     arg_locations = dict()
 
-    def __init__(self, action):
-        self.name = action['name']
-        self.args = action['args']
+    def __init__(self, name='', args='', precondition='', effect=dict):
+        self.name = name
+        self.args = args
         self._set_arg_locations()
-        self.precondition = action['precondition']
-        self.pos = self._get_predicates(action['effect']['positive'])
-        self.neg = self._get_predicates(action['effect']['negative'])
+        self.precondition = precondition
+        self.pos = self._get_predicates(effect['positive'])
+        self.neg = self._get_predicates(effect['negative'])
 
     def _set_arg_locations(self):
         self.arg_locations = dict()
@@ -62,7 +65,7 @@ class Action:
     def _get_predicates(self, effect):
         l = []
         for p in effect:
-            l.append(Predicate(p['name'], p['args']))
+            l.append(Predicate(**p))
         return l
 
     def __hash__(self):
@@ -76,21 +79,21 @@ class State:
         self._set_actions(state['actions'])
         self.state = set()
 
-    def perform_action(self, name, args):
+    def perform_action(self, p: Predicate):
         print(self)
-        p = self.actions[name].get_pos_list(args)
-        self.state = self.state | p
-        n = self.actions[name].get_neg_list(args)
-        self.state = self.state - n
+        pos = self.actions[p.name].get_pos_list(p.args)
+        self.state = self.state | pos
+        neg = self.actions[p.name].get_neg_list(p.args)
+        self.state = self.state - neg
         print(len(self.state))
 
     def _set_actions(self, actions):
         for a in actions:
-            self.actions[a['name']] = Action(a)
+            self.actions[a['name']] = Action(**a)
 
     def set_init_state(self, predicate_json):
         for p in predicate_json:
-            self.state.add(Predicate(p['name'], p['args']))
+            self.state.add(Predicate(**p))
 
     def __str__(self):
         for p in self.state:
@@ -158,7 +161,13 @@ state = State(parsed)
 
 problem = parse_state('blocksworld', 'state_1')
 state.set_init_state(problem['init'])
+plan = parse_plan('blocksworld', 'state_1')
+for s in plan['steps']:
+    p = Predicate(**s['predicate'])
+    state.perform_action(p)
+
 state.perform_action('move-b-to-t', ('b9', 'b4'))
+print(state)
 print(parser.parse(sample_conf))
 f = open('out.txt', 'w')
 

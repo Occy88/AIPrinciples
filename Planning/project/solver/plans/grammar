@@ -1,0 +1,23 @@
+?start: problem
+
+problem: "(" definition domain objects init goal ")"
+
+definition: "define" "(" "problem" string ")"
+
+domain: "(" ":domain" string ")"
+
+objects: "(" ":objects" string+ ")"
+
+init: "(" ":init" predicates ")"
+
+goal: "(" ":goal" "("  "and" predicates ")" ")"
+
+predicates: predicate+
+
+predicate: "(" string string+ ")"
+
+string :  /\w+(-\w+)*/
+number: /\d+(\.?\d+)?/
+
+%import common.WS
+%ignore WS

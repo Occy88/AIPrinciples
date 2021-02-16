@@ -10,6 +10,9 @@ class Predicate:
         self.name = name
         self.args = args
 
+    def mln(self):
+        return self.name + '(' + ', '.join(self.args) + ')'
+
     def __copy__(self):
         return Predicate(self.name, self.args)
 
@@ -95,6 +98,12 @@ class State:
         for p in predicate_json:
             self.state.add(Predicate(**p))
 
+    def mln(self):
+        s = ''
+        for p in self.state:
+            s += '\n' + p.mln()
+        return s
+
     def __str__(self):
         for p in self.state:
             return str(p)
@@ -166,34 +175,54 @@ for s in plan['steps']:
     p = Predicate(**s['predicate'])
     state.perform_action(p)
 
-state.perform_action('move-b-to-t', ('b9', 'b4'))
+# state.perform_action('move-b-to-t', ('b9', 'b4'))
 print(state)
 print(parser.parse(sample_conf))
 f = open('out.txt', 'w')
 
 
-def write_action(name, args, predicate):
+def write_action(name, args, predicate, preconditions):
     p1 = '\n0.000000    ' + name + '('
-    p2 = ','.join(args) + ' ,t) => '
-    return p1 + p2 + predicate['name'] + '(' + ', '.join(list(predicate['args'])) + ', t+1)'
+    p2 = ','.join(args) + ' ) => '
+    p3 = ''
+    for p in preconditions:
+        p3 += '^' + p['name'] + '(' + ','.join(p['args']) + ')'
+
+    return p1 + p2 + predicate['name'] + '(' + ', '.join(list(predicate['args'])) + ')' + p3
 
 
 f.write("// predicate declarations")
 
 for a in parsed['actions']:
-    f.write('\n' + a['name'] + '(' + ','.join(a['args']) + ',t)')
+    f.write('\n' + a['name'] + '(' + ','.join(a['args']) + ')')
 
 for p in parsed['predicates']:
-    f.write('\n' + p['name'] + ' (' + ','.join(p['args']) + ',t)')
+    f.write('\n' + p['name'] + ' (' + ','.join(p['args']) + ')')
 f.write("\n\n// formulas: ")
 
 for a in parsed['actions']:
     # f.write("\n\n// positives: ")
     for p in a['effect']['positive']:
-        f.write(write_action(a['name'], a['args'], p))
+        f.write(write_action(a['name'], a['args'], p, a['precondition']))
     # f.write("\n\n// negatives: ")
     for p in a['effect']['negative']:
-        f.write(write_action(a['name'], a['args'], p))
+        f.write(write_action(a['name'], a['args'], p, a['precondition']))
+
+f.write('\n\n//databae test \n\n')
+
+
+def write_state(s, p):
+    f.write("\n\n// new_state \n--- ")
+    f.write('\n' + p.mln())
+    f.write(s.mln())
+
+
+f.write(state.mln())
+for s in plan['steps']:
+    p = Predicate(**s['predicate'])
+    state.perform_action(p)
+    write_state(state, p)
+
 # #
 # # $name
 # move-b-to-b

@@ -13,6 +13,9 @@ class Predicate:
     def mlnCap(self):
         return self.name + '(' + ', '.join(list(map(lambda x: x.capitalize(), self.args))) + ')'
 
+    def mlnPre(self):
+        return self.name + '(' + ', '.join(list(map(lambda x: x.capitalize(), self.args))) + ', pre)'
+
     def mln(self):
         return self.name + '(' + ', '.join(self.args) + ')'
 
@@ -84,12 +87,14 @@ class State:
     def __init__(self, state):
         self._set_actions(state['actions'])
         self.state = set()
+        self.latest_removed = set()
 
     def perform_action(self, p: Predicate):
         print(self)
         pos = self.actions[p.name].get_pos_list(p.args)
         self.state = self.state | pos
         neg = self.actions[p.name].get_neg_list(p.args)
+        self.latest_removed = neg
         self.state = self.state - neg
         print(len(self.state))
 
@@ -99,6 +104,7 @@ class State:
 
     def set_init_state(self, predicate_json):
         for p in predicate_json:
+            s = Predicate(**p)
             self.state.add(Predicate(**p))
 
     def mlnCap(self):
@@ -126,30 +132,30 @@ class PddlToJson(Transformer):
         return {'domain': domain, 'predicates': predicates, 'actions': actions}
 
     def string(self, s):
-        return s
+        return s[0].replace('-', '_')
 
     def predicates(self, p_list):
         return p_list
 
     def predicate(self, args):
-        name = args[0][0].value
+        name = args[0]
         vals = list(tuple(args[1:]))
         p = {'name': name, 'args': vals}
         return p
 
     def var(self, v):
-        val = v[0][0].value
+        val = v[0]
         return val
 
     def parameters(self, args):
         return list(args)
 
     def definition(self, name):
-        return name[0][0].value
+        return name
 
     def action(self, args):
         name, parameters, precondition, effect = args
-        return {'name': name[0].value, 'args': parameters, 'precondition': precondition, 'effect': effect}
+        return {'name': name, 'args': parameters, 'precondition': precondition, 'effect': effect}
 
     def effect(self, p_set):
         negative = list()
@@ -180,9 +186,6 @@ state = State(parsed)
 problem = parse_state('blocksworld', 'state_1')
 state.set_init_state(problem['init'])
 plan = parse_plan('blocksworld', 'state_1')
-for s in plan['steps']:
-    p = Predicate(**s['predicate'])
-    state.perform_action(p)
 
 # state.perform_action('move-b-to-t', ('b9', 'b4'))
 print(state)
@@ -190,24 +193,33 @@ print(parser.parse(sample_conf))
 f = open('out.txt', 'w')
 
 
-def write_action(name, args, predicate, preconditions):
-    p1 = '\n0.000000    ' + name + '('
-    p2 = ','.join(args) + ' ) => '
-    p3 = ''
-    for p in preconditions:
-        p3 += '^' + p['name'] + '(' + ','.join(p['args']) + ')'
+# //modify precondition to  pre(a,b, past)
+#   modify negation to neg(a,b, current)
 
-    return p1 + p2 + predicate['name'] + '(' + ', '.join(list(predicate['args'])) + ')' + p3
+def add_q(l):
+    return list(map(lambda x: '?' + x, l))
+
+
+def add_pre(pred, preconditions):
+    pre = ''
+    for p in preconditions:
+        pre += '^' + p['name'] + '(' + ','.join(p['args']) + ', pre)'
+    return '(' + pred + pre + ')'
+
+
+def write_action(name, args, predicate, preconditions):
+    score = '\n0.000000    '
+    action_sig = name + '(' + ','.join(args) + ')'
+
+    return score + add_pre(action_sig, preconditions) + ' => ' + predicate['name'] + '(' + ', '.join(
+        list(predicate['args'])) + ')'
 
 
 def write_neg_action(name, args, predicate, preconditions):
-    p1 = '\n0.000000    ' + name + '('
-    p2 = ','.join(args) + ' ) => '
-    p3 = ''
-    for p in preconditions:
-        p3 += '^' + p['name'] + '(' + ','.join(p['args']) + ')'
+    score = '\n0.000000    '
+    action_sig = name + '(' + ','.join(args) + ')'
 
-    return p1 + p2 + "!" + predicate['name'] + '(' + ', '.join(list(predicate['args'])) + ')' + p3
+    return score + action_sig + ' => !' + predicate['name'] + '(' + ', '.join(list(predicate['args'])) + ')'
 
 
 f.write("// predicate declarations")
@@ -216,7 +228,7 @@ for a in parsed['actions']:
     f.write('\n' + a['name'] + '(' + ','.join(['object'] * len(a['args'])) + ')')
 
 for p in parsed['predicates']:
-    f.write('\n' + p['name'] + ' (' + ','.join(['object'] * len(p['args'])) + ')')
+    f.write('\n' + p['name'] + '(' + ','.join(['object'] * len(p['args'])) + ')')
 f.write("\n\n// formulas: ")
 
 for a in parsed['actions']:
@@ -241,6 +253,9 @@ for s in plan['steps']:
     p = Predicate(**s['predicate'])
     state.perform_action(p)
     write_state(state, p)
+    for pr in state.latest_removed:
+        f.write('\n!' + pr.mlnCap())
+        f.write('\n' + pr.mlnPre())
 
 # #
 # # $name

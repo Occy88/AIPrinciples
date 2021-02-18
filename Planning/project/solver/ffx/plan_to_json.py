@@ -13,7 +13,7 @@ class PddlToJson(Transformer):
         # d=s.value
         # d2=s.lower()
         d3=s[0]
-        d4=d3.value.lower()
+        d4=d3.value.lower().replace('-','_')
         return d4
 
     def predicate(self, args):

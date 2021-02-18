@@ -19,13 +19,12 @@ class PddlToJson(Transformer):
         return list(args)
 
     def definition(self, name):
-        return name[0].value
+        return name
 
     def domain(self, name):
-        return name[0].value
+        return name
 
     def predicate(self, args):
-        args = list(map(lambda x: x.value, args))
         name = args[0]
         vals = list(tuple(args[1:]))
         p = {'name': name, 'args': vals}
@@ -38,7 +37,8 @@ class PddlToJson(Transformer):
     goal = list
 
     def string(self, s):
-        return s[0]
+        s=s[0].value
+        return s.replace('-','_')
 
     number = v_args(inline=True)(float)
 

@@ -319,7 +319,7 @@ on_table(B6, pre)
 !clear(B2)
 clear(B2, pre)
 
-// new_state 
+// new_state po
 --- 
 move_t_to_b(B9, B6)
 on(B10, B7)

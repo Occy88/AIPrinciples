@@ -10,6 +10,9 @@ class Predicate:
         self.name = name
         self.args = args
 
+    def mlnCap(self):
+        return self.name + '(' + ', '.join(list(map(lambda x: x.capitalize(), self.args))) + ')'
+
     def mln(self):
         return self.name + '(' + ', '.join(self.args) + ')'
 
@@ -97,6 +100,12 @@ class State:
     def set_init_state(self, predicate_json):
         for p in predicate_json:
             self.state.add(Predicate(**p))
+
+    def mlnCap(self):
+        s = ''
+        for p in self.state:
+            s += '\n' + p.mlnCap()
+        return s
 
     def mln(self):
         s = ''
@@ -191,13 +200,23 @@ def write_action(name, args, predicate, preconditions):
     return p1 + p2 + predicate['name'] + '(' + ', '.join(list(predicate['args'])) + ')' + p3
 
 
+def write_neg_action(name, args, predicate, preconditions):
+    p1 = '\n0.000000    ' + name + '('
+    p2 = ','.join(args) + ' ) => '
+    p3 = ''
+    for p in preconditions:
+        p3 += '^' + p['name'] + '(' + ','.join(p['args']) + ')'
+
+    return p1 + p2 + "!" + predicate['name'] + '(' + ', '.join(list(predicate['args'])) + ')' + p3
+
+
 f.write("// predicate declarations")
 
 for a in parsed['actions']:
-    f.write('\n' + a['name'] + '(' + ','.join(a['args']) + ')')
+    f.write('\n' + a['name'] + '(' + ','.join(['object'] * len(a['args'])) + ')')
 
 for p in parsed['predicates']:
-    f.write('\n' + p['name'] + ' (' + ','.join(p['args']) + ')')
+    f.write('\n' + p['name'] + ' (' + ','.join(['object'] * len(p['args'])) + ')')
 f.write("\n\n// formulas: ")
 
 for a in parsed['actions']:
@@ -206,18 +225,18 @@ for a in parsed['actions']:
         f.write(write_action(a['name'], a['args'], p, a['precondition']))
     # f.write("\n\n// negatives: ")
     for p in a['effect']['negative']:
-        f.write(write_action(a['name'], a['args'], p, a['precondition']))
+        f.write(write_neg_action(a['name'], a['args'], p, a['precondition']))
 
 f.write('\n\n//databae test \n\n')
 
 
 def write_state(s, p):
     f.write("\n\n// new_state \n--- ")
-    f.write('\n' + p.mln())
-    f.write(s.mln())
+    f.write('\n' + p.mlnCap())
+    f.write(s.mlnCap())
 
 
-f.write(state.mln())
+f.write(state.mlnCap())
 for s in plan['steps']:
     p = Predicate(**s['predicate'])
     state.perform_action(p)

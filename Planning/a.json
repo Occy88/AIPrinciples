@@ -1,0 +1,12 @@
+{"domain": "blocksworld",
+  "predicates": [({"name", "args"}), ({"name", "args"}), ({"name", "args"})],
+  "actions": [
+    {
+      "name": "move-b-to-b",
+      "params": ({"bt", "bm", "bf"}),
+      "pre": {({"name", "args"})},
+    "effect": {"positive": {({"name", "args"})},
+      "negative": {({({"name", "args"})})}}},
+
+
+    {"name": "move-b-to-t", "params": ({"bm", "bf"}), "pre": {({"name", "args"})}, "effect": {"positive": {({"name", "args"})}, "negative": {({({"name", "args"})})}}}, {"name": "move-t-to-b", "params": ({"bt", "bm"}), "pre": {({"name", "args"})}, "effect": {"positive": {({"name", "args"})}, "negative": {({({"name", "args"})})}}}]}

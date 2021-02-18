@@ -1,0 +1,29 @@
+?start: pddl
+
+pddl:"(" definition predicates action+ ")"
+
+
+definition : "define" "(" "domain" string ")"
+
+predicates : "(" ":predicates" predicate+ ")"
+
+action : "(" ":action" string parameters precondition effect ")"
+
+parameters : ":parameters" "(" var+ ")"
+
+precondition : ":precondition" "(" "and" predicate+ ")"
+
+effect : ":effect" "(" "and" (n_predicate|predicate)+ ")"
+
+n_predicate : "(" "not" predicate ")"
+
+predicate : "(" string var+ ")"
+
+var : "?" string
+
+string :  /\w+(-\w+)*/
+
+
+
+%import common.WS
+%ignore WS

@@ -4,20 +4,18 @@ from lark import Lark, Transformer, v_args
 from Planning.project.generator.state_to_json import parse_state
 from Planning.project.solver.ffx.plan_to_json import parse_plan
 
-
+import copy
 class Predicate:
     def __init__(self, name='', args='9'):
         self.name = name
         self.args = args
 
-    def mlnCap(self):
-        return self.name + '(' + ', '.join(list(map(lambda x: x.capitalize(), self.args))) + ')'
-
-    def mlnPre(self):
-        return self.name + '(' + ', '.join(list(map(lambda x: x.capitalize(), self.args))) + ', pre)'
-
-    def mln(self):
-        return self.name + '(' + ', '.join(self.args) + ')'
+    def mln(self, cap_args=False, extra_args=[]):
+        args = copy.copy(self.args)
+        if cap_args:
+            args = list(map(lambda x: x.capitalize(), self.args))
+        args += extra_args
+        return self.name + '(' + ', '.join(args) + ')'
 
     def __copy__(self):
         return Predicate(self.name, self.args)
@@ -88,11 +86,14 @@ class State:
         self._set_actions(state['actions'])
         self.state = set()
         self.latest_removed = set()
+        self.latest_added = set()
+        # self.latest_added=set()
 
     def perform_action(self, p: Predicate):
         print(self)
         pos = self.actions[p.name].get_pos_list(p.args)
         self.state = self.state | pos
+        self.latest_added = pos
         neg = self.actions[p.name].get_neg_list(p.args)
         self.latest_removed = neg
         self.state = self.state - neg
@@ -107,16 +108,10 @@ class State:
             s = Predicate(**p)
             self.state.add(Predicate(**p))
 
-    def mlnCap(self):
+    def mln(self, cap_args=False, extra_args=[]):
         s = ''
         for p in self.state:
-            s += '\n' + p.mlnCap()
-        return s
-
-    def mln(self):
-        s = ''
-        for p in self.state:
-            s += '\n' + p.mln()
+            s += '\n' + p.mln(cap_args=cap_args, extra_args=extra_args)
         return s
 
     def __str__(self):
@@ -203,7 +198,8 @@ def add_q(l):
 def add_pre(pred, preconditions):
     pre = ''
     for p in preconditions:
-        pre += '^' + p['name'] + '(' + ','.join(p['args']) + ', pre)'
+        a = p['args']
+        pre += '^' + p['name'] + '(' + ','.join(a) + ',0)'
     return '(' + pred + pre + ')'
 
 
@@ -211,52 +207,59 @@ def write_action(name, args, predicate, preconditions):
     score = '\n0.000000    '
     action_sig = name + '(' + ','.join(args) + ')'
 
-    return score + add_pre(action_sig, preconditions) + ' => ' + predicate['name'] + '(' + ', '.join(
-        list(predicate['args'])) + ')'
+    return score + action_sig + ' => ' + add_pre(predicate['name'] + '(' + ', '.join(
+        list(predicate['args'])) + ',1)', preconditions)
 
 
 def write_neg_action(name, args, predicate, preconditions):
     score = '\n0.000000    '
     action_sig = name + '(' + ','.join(args) + ')'
 
-    return score + action_sig + ' => !' + predicate['name'] + '(' + ', '.join(list(predicate['args'])) + ')'
+    return score + action_sig + ' => ' + add_pre(predicate['name'] + '(' + ', '.join(
+        list(predicate['args'])) + ',-1)', preconditions)
 
 
 f.write("// predicate declarations")
-
+f.write("\nt = {-1,0,1}")
 for a in parsed['actions']:
     f.write('\n' + a['name'] + '(' + ','.join(['object'] * len(a['args'])) + ')')
 
 for p in parsed['predicates']:
-    f.write('\n' + p['name'] + '(' + ','.join(['object'] * len(p['args'])) + ')')
+    f.write('\n' + p['name'] + '(' + ','.join(['object'] * len(p['args'])) + ',t)')
 f.write("\n\n// formulas: ")
 
 for a in parsed['actions']:
+    score = '\n0.000000    '
+    action_sig = a['name'] + '(' + ','.join(a['args']) + ')'
+    pre_p = '^'.join(list(map(lambda x: Predicate(**x).mln(extra_args=['1']), a['effect']['positive'])))
+    pre_n = '^'.join(list(map(lambda x: Predicate(**x).mln(extra_args=['-1']), a['effect']['negative'])))
+    precon = '^'.join(list(map(lambda x: Predicate(**x).mln(extra_args=['0']), a['precondition'])))
+    f.write(score + action_sig + ' ^ ' + precon +' => ' + pre_p +  ' ^ ' + pre_n)
     # f.write("\n\n// positives: ")
-    for p in a['effect']['positive']:
-        f.write(write_action(a['name'], a['args'], p, a['precondition']))
-    # f.write("\n\n// negatives: ")
-    for p in a['effect']['negative']:
-        f.write(write_neg_action(a['name'], a['args'], p, a['precondition']))
+    # for p in a['effect']['positive']:
+    #     f.write(write_action(a['name'], a['args'], p, a['precondition']))
+    # # f.write("\n\n// negatives: ")
+    # for p in a['effect']['negative']:
+    #     f.write(write_neg_action(a['name'], a['args'], p, a['precondition']))
 
 f.write('\n\n//databae test \n\n')
 
 
 def write_state(s, p):
     f.write("\n\n// new_state \n--- ")
-    f.write('\n' + p.mlnCap())
-    f.write(s.mlnCap())
+    f.write('\n' + p.mln(cap_args=True))
+    f.write(s.mln(cap_args=True, extra_args=['0']))
 
 
-f.write(state.mlnCap())
+f.write(state.mln(cap_args=True))
 for s in plan['steps']:
     p = Predicate(**s['predicate'])
-    state.perform_action(p)
     write_state(state, p)
+    state.perform_action(p)
     for pr in state.latest_removed:
-        f.write('\n!' + pr.mlnCap())
-        f.write('\n' + pr.mlnPre())
-
+        f.write('\n' + pr.mln(cap_args=True, extra_args=['-1']))
+    for pr in state.latest_added:
+        f.write('\n' + pr.mln(cap_args=True, extra_args=['1']))
 # #
 # # $name
 # move-b-to-b

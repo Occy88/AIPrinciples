@@ -1,0 +1,66 @@
+==================
+PRAC LEARNING TOOL
+==================
+
+loaded 13 database(s).
+Parameter:                   Value:
+---------------------------  -----------------------------------------------
+db                           13 Databases
+discr_preds                  0
+epreds
+grammar                      StandardGrammar
+ignore_unknown_preds         0
+ignore_zero_weight_formulas  0
+incremental                  0
+logic                        FirstOrderLogic
+method                       BPLL
+mln                          <pracmln.mln.base.MLN object at 0x7fe25db3b520>
+multicore                    1
+output_filename
+params
+pattern
+prior_mean                   0
+prior_stdev                  5
+profile                      0
+qpreds
+save                         0
+shuffle                      0
+use_initial_weights          0
+use_prior                    0
+verbose                      1
+setup learners...
+[■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■] 100.000 % set up MultipleDatabaseLearner [13 x BPLL[no prior]]
+preparing optimization...
+[■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■] 100.000 % starting optimization with bfgs... {}
+
+Optimization terminated successfully.
+         Current function value: 4748.751339
+         Iterations: 25
+         Function evaluations: 26
+         Gradient evaluations: 26
+optimization done with bfgs...
+f-opt: -4748.7513393470326264
+function evaluations: 26
+warning flags: 0
+
+
+===========================
+LEARNT MARKOV LOGIC NETWORK
+===========================
+
+// domain declarations
+t = {-1,0,1}
+
+
+
+// predicate declarations
+clear(object,t)
+move_b_to_t(object,object)
+move_t_to_b(object,object)
+on(object,object,t)
+on_table(object,t)
+
+// formulas
+26.547690   (move_b_to_t(bm,bf) ^ clear(bm,0) ^ on(bm,bf,0)) => (on_table(bm,1) ^ clear(bf,1) ^ on(bm,bf,-1))
+18.140951   (move_t_to_b(bm,bt) ^ clear(bm,0) ^ clear(bt,0) ^ on_table(bm,0)) => (on(bm,bt,1) ^ clear(bt,-1) ^ on_table(bm,-1))
+

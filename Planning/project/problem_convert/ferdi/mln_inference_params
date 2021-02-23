@@ -1,0 +1,20 @@
+
+// domain declarations
+t = {-1,0,1}
+
+
+
+// predicate declarations
+clear(object,t)
+move_b_to_t(object,object)
+move_t_to_b(object,object)
+on(object,object,t)
+on_table(object,t)
+
+// formulas
+26.547690   (move_b_to_t(bm,bf) ^ clear(bm,0) ^ on(bm,bf,0)) => (on_table(bm,1) ^ clear(bf,1) ^ on(bm,bf,-1))
+18.140951   (move_t_to_b(bm,bt) ^ clear(bm,0) ^ clear(bt,0) ^ on_table(bm,0)) => (on(bm,bt,1) ^ clear(bt,-1) ^ on_table(bm,-1))
+
+
+
+

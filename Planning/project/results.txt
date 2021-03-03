@@ -1,0 +1,46 @@
+// domain declarations
+t = {-1,0,1}
+
+
+
+// predicate declarations
+clear(object,t)
+move_b_to_t(object,object)
+move_t_to_b(object,object)
+on(object,object,t)
+on_table(object,t)
+
+// formulas
+0.000000    move_b_to_t(bm,bf) => clear(bm,0)
+0.000000    move_b_to_t(bm,bf) => on(bm,bf,0)
+0.000000    move_b_to_t(bm,bf) => on_table(bm,1)
+0.000000    move_b_to_t(bm,bf) => clear(bf,1)
+0.000000    move_b_to_t(bm,bf) => on(bm,bf,-1)
+0.000000    move_t_to_b(bm,bt) => on_table(bm,-1)
+0.000000    move_t_to_b(bm,bt) => clear(bm,0)
+0.000000    move_t_to_b(bm,bt) => clear(bt,0)
+0.000000    move_t_to_b(bm,bt) => on_table(bm,0)
+0.000000    move_t_to_b(bm,bt) => on(bm,bt,1)
+// domain declarations
+t = {-1,0,1}
+
+
+
+// predicate declarations
+clear(object,t)
+move_b_to_t(object,object)
+move_t_to_b(object,object)
+on(object,object,t)
+on_table(object,t)
+
+// formulas
+13.346193   move_b_to_t(bm,bf) => clear(bm,0)
+13.409347   move_b_to_t(bm,bf) => on(bm,bf,0)
+15.151680   move_b_to_t(bm,bf) => on_table(bm,1)
+17.005631   move_b_to_t(bm,bf) => clear(bf,1)
+16.888278   move_b_to_t(bm,bf) => on(bm,bf,-1)
+18.766352   move_t_to_b(bm,bt) => on_table(bm,-1)
+19.713057   move_t_to_b(bm,bt) => clear(bm,0)
+14.321130   move_t_to_b(bm,bt) => clear(bt,0)
+19.713057   move_t_to_b(bm,bt) => on_table(bm,0)
+17.134445   move_t_to_b(bm,bt) => on(bm,bt,1)

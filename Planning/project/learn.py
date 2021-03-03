@@ -1,7 +1,7 @@
 from pracmln import MLN
 results=open("results",'w')
 # state.perform_action('move-b-to-t', ('b9', 'b4'))
-mln_params = 'mln_params.mln'
+mln_params = 'mln_params_r.mln'
 mln_database = 'mln_db_r.mln'
 logic = 'FirstOrderLogic'
 grammar = 'StandardGrammar'
@@ -16,7 +16,8 @@ class pr():
 mln.write(pr())
 mln.write(results)
 db = Database.load(mln, mln_database)
-mln.learn(db)
-mln.write(pr())
+result=mln.learn(db)
 
-mln.write(results)
+result.write(pr())
+
+result.write(results)

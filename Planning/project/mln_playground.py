@@ -88,6 +88,7 @@ for index,s in enumerate(plan['steps']):
     p = Predicate(**s['predicate'])
     write_state(state, p)
     state.perform_action(p)
+
     for pr in state.latest_removed:
         f.write('\n' + pr.mln(cap_args=True, extra_args=['-1']))
     for pr in state.latest_added:

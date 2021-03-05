@@ -16,8 +16,19 @@ class pr():
 mln.write(pr())
 mln.write(results)
 db = Database.load(mln, mln_database)
-result=mln.learn(db)
+from problem_convert.PlanTraceGen import StateInfrence
+from problem_convert.PlanTraceGen import Database as DB
+s=StateInfrence()
+databases=open(mln_database).read().split("---")
+d_processed=[]
 
-result.write(pr())
-
-result.write(results)
+for d in databases:
+    d_processed.append(DB.parse_db(d))
+for d in d_processed:
+    s.process_database(d)
+print("done")
+# result=mln.learn(db)
+#
+# result.write(pr())
+#
+# result.write(results)

@@ -76,7 +76,7 @@ for a in parsed['actions']:
     #     f.write(write_neg_action(a['name'], a['args'], p, a['precondition']))
 f.close()
 f = open(mln_database, 'w')
-f.write('\n\n//databae test \n\n')
+# f.write('\n\n//databae test \n\n')
 
 
 def write_state(s, p):
@@ -95,7 +95,7 @@ for index,s in enumerate(plan['steps']):
         f.write('\n' + pr.mln(cap_args=True, extra_args=['1']))
 
     if index<len(plan['steps'])-1:
-        f.write("\n\n// new_state \n--- ")
+        f.write("\n--- ")
 
 
 f.close()

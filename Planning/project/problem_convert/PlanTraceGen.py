@@ -48,6 +48,13 @@ class Predicate:
         return hash(p_vals)
 
     @staticmethod
+    def from_str(p_str):
+        sp = p_str.split("(")
+        args = sp[1]
+        args = args.strip(")").replace(' ', '').split(',')
+        return Predicate(sp[0], args)
+
+    @staticmethod
     def exists_in_list_by_properties(predicate, predicate_list, properties):
         """
         Tests if there is a predicate with the same name in a list of predicates
@@ -101,10 +108,11 @@ class Predicate:
         matching_i = Predicate.match_arguments(p_parent, p_child)
         matching_v = []
         for i, v in enumerate(matching_i):
-            if i < 0:
+            if int(v) < 0:
                 matching_v.append(p_child.args[i])
             else:
                 matching_v.append('V' + str(v))
+        return matching_v
 
     @staticmethod
     def unique_by_name(predicate_list):
@@ -213,6 +221,7 @@ class State:
 
 
 from pracmln import MLN
+from itertools import chain
 
 
 class Database:
@@ -231,10 +240,41 @@ class Database:
         Returns:
         """
         s = set()
-        for p in self.state:
-            if len(self.action.arg_set.intersection(p.arg_set)) > 0:
+        for p in chain(self.state, self.pos_effects, self.neg_effects):
+            # TODO exclusion should not be limited to on? thi is to be discussed
+            if len(self.action.arg_set.intersection(p.arg_set)) > 0 and len(
+                    p.arg_set.difference(self.action.arg_set)) < 2:
                 s.add(p)
+
         return s
+
+    @staticmethod
+    def parse_db(db: str):
+        p_str = db.split('\n')
+        p_p = []
+        for p in p_str:
+            # remove comments
+            p = p.split('//')[0]
+            # avoid empty lines, not nice for now but whatever.
+            if len(p) < 2:
+                continue
+            p_p.append(Predicate.from_str(p))
+        pos_effects = set()
+        neg_effects = set()
+        state = set()
+        action = ''
+        for p in p_p:
+            if p.args[-1] == '0':
+                state.add(p)
+            elif p.args[-1] == '1':
+                pos_effects.add(p)
+            elif p.args[-1] == '-1':
+                neg_effects.add(p)
+            else:
+                if not action == '':
+                    raise Exception("Multiple actions in database: ", p.name, action.name)
+                action = p
+        return Database(p_p[0], state, pos_effects, neg_effects)
 
 
 class StateInfrence:
@@ -257,18 +297,21 @@ class StateInfrence:
         relevant_weights = db.relevant_state_predicates
         # existing_weights=self.action_weights[db.action]
         # existing_rejected_weidghts=self.action_rejected_weights[db.action]
-        self.action_weights[db.action] = []
+        if db.action.name not in self.action_weights:
+            self.action_mlns[db.action.name] = []
+            self.action_weights[db.action.name] = []
+            self.action_pending_weights[db.action.name] = []
+            self.action_rejected_weights[db.action.name] = []
         db.action.arg_types = Predicate.matching_as_variables(db.action, db.action)
         for w in relevant_weights:
             w.arg_types = Predicate.matching_as_variables(db.action, w)
-            if w in self.action_rejected_weights[db.action] or Predicate.exists_in_list_by_properties(w,
-                                                                                                      self.action_weights[
-                                                                                                          db.action],
-                                                                                                      ['name',
-                                                                                                       'arg_types']):
+            if w in self.action_rejected_weights[db.action.name] or \
+                    Predicate.exists_in_list_by_properties(w,
+                                                           self.action_weights[db.action.name],
+                                                           ['name', 'arg_types']):
                 continue
-            self.action_weights[db.action].append(w)
-        pass
+            self.action_weights[db.action.name].append(w)
+
     def _new_action_process(self, db: Database):
         """
         Check if the action already exists, add it if it doesn't,
@@ -286,4 +329,3 @@ class StateInfrence:
             # all predicates in state set are relevant if the yave an argument in common with action
 
             mln = MLN(self.logic, self.grammar)
-

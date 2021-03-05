@@ -311,7 +311,12 @@ class StateInfrence:
                                                            ['name', 'arg_types']):
                 continue
             self.action_weights[db.action.name].append(w)
-
+    def gen_weights(self,action:Predicate):
+        s=""
+        for w in self.action_weights[action.name]:
+            s+= "0.000000    "+ action.mln_type()+" => "+w.mln_type()+'\n'
+        print(s)
+        return s
     def _new_action_process(self, db: Database):
         """
         Check if the action already exists, add it if it doesn't,
@@ -327,5 +332,5 @@ class StateInfrence:
         self.insert_weights(db)
         if db.action not in self.action_mlns:
             # all predicates in state set are relevant if the yave an argument in common with action
-
+            self.gen_weights(db.action)
             mln = MLN(self.logic, self.grammar)

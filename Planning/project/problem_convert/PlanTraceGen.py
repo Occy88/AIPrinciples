@@ -7,6 +7,7 @@ class Predicate:
         self.args = args
         self.arg_set = set(args)
         self.arg_types = arg_types
+        self.weight = 0.0
 
     def _get_mln_str(self, args_to_use, cap_args, extra_args):
         args = copy.copy(args_to_use)
@@ -168,7 +169,7 @@ class Action:
             pc = p.__copy__()
             pc.args = list(map(lambda x: args[x], list(map(lambda y: self.arg_locations[y], p.args))))
             l.add(pc)
-            print(l)
+            # print(l)
         return l
 
     def _get_predicates(self, effect):
@@ -192,7 +193,7 @@ class State:
         # self.latest_added=set()
 
     def perform_action(self, p: Predicate):
-        print(self)
+        # print(self)
         pos = self.actions[p.name].get_pos_list(p.args)
         self.state = self.state | pos
         self.latest_added = pos
@@ -248,6 +249,13 @@ class Database:
 
         return s
 
+    def mln_db(self):
+        a = self.action.mln()
+        p = ''
+        for pr in chain(self.state, self.neg_effects, self.pos_effects):
+            p += pr.mln() + '\n'
+        return a + '\n' + p
+
     @staticmethod
     def parse_db(db: str):
         p_str = db.split('\n')
@@ -277,11 +285,14 @@ class Database:
         return Database(p_p[0], state, pos_effects, neg_effects)
 
 
+from pracmln.mln.database import Database as DB
+
+
 class StateInfrence:
-    def __init__(self):
-        self.database = set()
+    def __init__(self, predicate_file):
+        self.predicate_file = predicate_file
         # set of markov logic networks
-        self.action_mlns = dict()
+        self.action_mln = dict()
         self.action_weights = dict()
         self.action_rejected_weights = dict()
         self.action_pending_weights = dict()
@@ -293,12 +304,44 @@ class StateInfrence:
     def process_database(self, db: Database):
         self._new_action_process(db)
 
-    def insert_weights(self, db):
+    def update_mln(self):
+        action = self.db.action
+        # if action.name not in self.action_mln:
+
+        predicates = open(self.predicate_file).read() + "\n\n// formulas: \n"
+        weights = self.gen_weights(action)
+        open('tmp.mln', 'w').write(predicates + weights)
+
+        m = MLN(self.logic, self.grammar, mlnfile='tmp.mln')
+        for i, w in enumerate(m.weights):
+            m.weights[i] = float(w)
+        # m.weights[1]=1
+        # m.weights[2]=10
+        # else:
+        #     m = self.action_mln[action.name]
+        open('tmp_db.mln', 'w').write(self.db.mln_db())
+        db = DB.load(m, 'tmp_db.mln')
+
+        res = m.learn(db)
+        for i, w in enumerate(res.weights):
+            self.action_weights[self.db.action.name][i].weight += w
+            res.weights[i]+=self.action_weights[self.db.action.name][i].weight
+        print(res.weights)
+        # res.weights[3] = 2
+        self.action_mln[action.name] = res
+        return res
+
+    # def gen_predicates(self,action:Predicate):
+    #     preds = Predicate.unique_by_name(self.action_weights[action.name])
+    #     p_str=''
+    #     for p in preds:
+    #         p_str+=p.mln_type()
+    def insert_weights(self):
+        db = self.db
         relevant_weights = db.relevant_state_predicates
         # existing_weights=self.action_weights[db.action]
         # existing_rejected_weidghts=self.action_rejected_weights[db.action]
         if db.action.name not in self.action_weights:
-            self.action_mlns[db.action.name] = []
             self.action_weights[db.action.name] = []
             self.action_pending_weights[db.action.name] = []
             self.action_rejected_weights[db.action.name] = []
@@ -311,12 +354,14 @@ class StateInfrence:
                                                            ['name', 'arg_types']):
                 continue
             self.action_weights[db.action.name].append(w)
-    def gen_weights(self,action:Predicate):
-        s=""
+
+    def gen_weights(self, action: Predicate):
+        s = ""
         for w in self.action_weights[action.name]:
-            s+= "0.000000    "+ action.mln_type()+" => "+w.mln_type()+'\n'
-        print(s)
+            s += str(w.weight) + "    " + action.mln_type() + " => " + w.mln_type() + '\n'
+        # print(s)
         return s
+
     def _new_action_process(self, db: Database):
         """
         Check if the action already exists, add it if it doesn't,
@@ -329,8 +374,6 @@ class StateInfrence:
         Returns:
 
         """
-        self.insert_weights(db)
-        if db.action not in self.action_mlns:
-            # all predicates in state set are relevant if the yave an argument in common with action
-            self.gen_weights(db.action)
-            mln = MLN(self.logic, self.grammar)
+        self.db = db
+        self.insert_weights()  # CREATES MLN'S
+        self.update_mln()

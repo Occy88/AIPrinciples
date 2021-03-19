@@ -1,0 +1,38 @@
+Metadata-Version: 2.1
+Name: pracmln
+Version: 1.2.4
+Summary: Markov logic networks in Python
+Home-page: http://www.pracmln.org
+Author: Daniel Nyga
+Author-email: nyga@cs.uni-bremen.de
+License: UNKNOWN
+Download-URL: https://github.com/danielnyga/pracmln/archive/1.2.4.tar.gz
+Keywords: statistical relational learning,mln,Markov logic networks,reasoning,probcog
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence 
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.5
+Requires-Dist: Image
+Requires-Dist: Pmw
+Requires-Dist: appdirs
+Requires-Dist: dnutils
+Requires-Dist: logutils
+Requires-Dist: matplotlib
+Requires-Dist: mpmath
+Requires-Dist: networkx
+Requires-Dist: numpy
+Requires-Dist: psutil
+Requires-Dist: pymongo
+Requires-Dist: pyparsing
+Requires-Dist: scipy
+Requires-Dist: tabulate
+
+Markov logic networks in Python. Please visit http://www.pracmln.org
+
+

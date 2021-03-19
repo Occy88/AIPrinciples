@@ -77,7 +77,21 @@ def parse_pddl(file):
 # action(name,t) ->  clear(bf,t+1)
 #
 # # Negative
-# action(name,t) -> clear(bt,t+1)
+# action(name,t) -> cl class UserObjectLevelPermission(permissions.BasePermission):
+#     """
+#        A Permission class to authenticate the user to an object
+#        """
+#
+#     def has_permission(self, request, view):
+#         path_items = view.kwargs.get('object_permission_id', None)
+#         object_instance = locate(settings.USER_OBJECT_PERMISSION_INSTANCE).objects.get(pk=path_items)
+#         if request.user.has_perm(settings.USER_OBJECT_PERMISSION, object_instance):
+#             return True
+#         else:
+#             raise PermissionDenied({"message": "You are not authenticated to this the entity receiving the delivery",
+#                                     "object_permission_id": object_instance.id})
+#
+ear(bt,t+1)
 # action(name,t) -> on(bm,bf)
 #
 #

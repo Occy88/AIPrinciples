@@ -8,9 +8,9 @@ on_table(object,t)
 on(object,object,t)
 
 // formulas: 
-14.124340849574773    move_t_to_b(V0, V1) => on_table(V0, -1)
 14.124340849574773    move_t_to_b(V0, V1) => on(V0, V1, 1)
-14.124340849574793    move_t_to_b(V0, V1) => clear(V0, 0)
-14.124340849574773    move_t_to_b(V0, V1) => on_table(V0, 0)
-14.124340849574773    move_t_to_b(V0, V1) => clear(V1, 0)
 14.124340849574773    move_t_to_b(V0, V1) => clear(V1, -1)
+14.124340849574793    move_t_to_b(V0, V1) => clear(V1, 0)
+14.124340849574773    move_t_to_b(V0, V1) => on_table(V0, 0)
+14.124340849574773    move_t_to_b(V0, V1) => on_table(V0, -1)
+14.124340849574773    move_t_to_b(V0, V1) => clear(V0, 0)

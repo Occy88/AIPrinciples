@@ -18,9 +18,12 @@
 
 (:action move-b-to-t
   :parameters (?bm ?bf)
-  :precondition (and (clear ?bm) (on ?bm ?bf))
+  :precondition (and
+   (clear ?bm)
+  (on ?bm ?bf))
   :effect (and (not (on ?bm ?bf))
-               (on-table ?bm) (clear ?bf)))
+               (on-table ?bm)
+               (clear ?bf)))
 
 (:action move-t-to-b
   :parameters (?bm ?bt)

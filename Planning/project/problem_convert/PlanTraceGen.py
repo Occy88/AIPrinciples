@@ -325,7 +325,7 @@ class StateInfrence:
         res = m.learn(db)
         for i, w in enumerate(res.weights):
             self.action_weights[self.db.action.name][i].weight += w
-            res.weights[i]+=self.action_weights[self.db.action.name][i].weight
+            res.weights[i] += self.action_weights[self.db.action.name][i].weight
         print(res.weights)
         # res.weights[3] = 2
         self.action_mln[action.name] = res

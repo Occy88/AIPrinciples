@@ -25,15 +25,23 @@ from problem_convert.PlanTraceGen import StateInfrence
 from problem_convert.PlanTraceGen import Database as DB
 import os
 
-s = StateInfrence(os.getcwd()+'/blocks_p_decs.txt')
 databases = open(mln_database).read().split("---")
 d_processed = []
 
 for d in databases:
     d_processed.append(DB.parse_db(d))
+
+s = StateInfrence(os.getcwd() + '/blocks_p_decs.txt')
 for d in d_processed:
     s.process_database(d)
-print("done")
+m = MLN()
+# m.prin
+for k, ml in s.action_mln.items():
+    print("============[ ", k, " ]============")
+
+    for i, val in enumerate(ml.weights):
+        print(val, "    ", k, " => ", s.action_weights[k][i].mln_type())
+# print("done")
 # result=mln.learn(db)
 #
 # result.write(pr())

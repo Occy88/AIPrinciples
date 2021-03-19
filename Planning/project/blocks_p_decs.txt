@@ -1,0 +1,8 @@
+// predicate declarations
+t = {-1,0,1}
+move_b_to_b(object,object,object)
+move_b_to_t(object,object)
+move_t_to_b(object,object)
+clear(object,t)
+on_table(object,t)
+on(object,object,t)

@@ -1,0 +1,31 @@
+(define (problem gripper-3-balls)
+(:domain gripper)
+(:objects La Lb G1 A1 A2 B1 B2 B3 )
+(:init
+(location La)
+(location Lb)
+(gripper G1)
+(arm A1)
+(arm A2)
+(ball B1)
+(ball B2)
+(ball B3)
+(belongs_to A1 G1)
+(belongs_to A2 G1)
+(empty A1)
+(empty A2)
+(at_g G1 La)
+(at B1 La)
+(at B2 La)
+(at B3 La)
+)
+(:goal
+(and
+(at_g G1 La)
+(at B1 Lb)
+(at B2 Lb)
+(at B3 Lb))
+)
+)
+
+

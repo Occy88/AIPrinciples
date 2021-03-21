@@ -91,7 +91,6 @@ def parse_pddl(file):
 #             raise PermissionDenied({"message": "You are not authenticated to this the entity receiving the delivery",
 #                                     "object_permission_id": object_instance.id})
 #
-ear(bt,t+1)
 # action(name,t) -> on(bm,bf)
 #
 #

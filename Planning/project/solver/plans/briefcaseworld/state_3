@@ -1,0 +1,39 @@
+step    0: MOVE L0 L7
+        1: PUT-IN O1 L7
+        2: MOVE L7 L1
+        3: MOVE L1 L8
+        4: PUT-IN O7 L8
+        5: MOVE L8 L1
+        6: PUT-IN O6 L1
+        7: MOVE L1 L0
+        8: MOVE L0 L4
+        9: PUT-IN O3 L4
+       10: MOVE L4 L2
+       11: PUT-IN O9 L2
+       12: MOVE L2 L3
+       13: PUT-IN O5 L3
+       14: MOVE L3 L2
+       15: MOVE L2 L9
+       16: PUT-IN O2 L9
+       17: PUT-IN O8 L9
+       18: MOVE L9 L5
+       19: PUT-IN O0 L5
+       20: MOVE L5 L9
+       21: TAKE-OUT O7
+       22: MOVE L9 L7
+       23: MOVE L7 L2
+       24: TAKE-OUT O1
+       25: MOVE L2 L7
+       26: MOVE L7 L1
+       27: TAKE-OUT O0
+       28: MOVE L1 L7
+       29: MOVE L7 L0
+       30: TAKE-OUT O6
+       31: MOVE L0 L7
+       32: TAKE-OUT O5
+       33: TAKE-OUT O2
+       34: TAKE-OUT O8
+       35: MOVE L7 L5
+     
+
+time spent:    0.00 seconds instantiating 241 easy, 0 hard action templates

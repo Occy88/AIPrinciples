@@ -17,7 +17,7 @@ effect : ":effect" "(" "and" (n_predicate|predicate)+ ")"
 
 n_predicate : "(" "not" predicate ")"
 
-predicate : "(" string var+ ")"
+predicate : "(" string var* ")"
 
 var : "?" string
 

@@ -14,7 +14,7 @@ goal: "(" ":goal" "("  "and" predicates ")" ")"
 
 predicates: predicate+
 
-predicate: "(" string string+ ")"
+predicate: "(" string string* ")"
 
 string :  /\w+(-\w+)*/
 number: /\d+(\.?\d+)?/

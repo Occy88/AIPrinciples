@@ -3,11 +3,11 @@ from pracmln import MLN
 results = open("results", 'w')
 # state.perform_action('move-b-to-t', ('b9', 'b4'))
 mln_params = 'mln_params_r.mln'
-mln_database = 'mln_db_r.mln'
+mln_database = 'mln_db.mln'
 logic = 'FirstOrderLogic'
 grammar = 'StandardGrammar'
 method = 'pseudo-log-likelihood'
-mln = MLN(logic, grammar, mln_params)
+domain='grid'
 from pracmln import Database
 import numpy as np
 
@@ -18,29 +18,43 @@ class pr():
         print(args, kwargs)
 
 
-mln.write(pr())
-mln.write(results)
-db = Database.load(mln, mln_database)
 from problem_convert.PlanTraceGen import StateInfrence
 from problem_convert.PlanTraceGen import Database as DB
 import os
+import random
 
-databases = open(mln_database).read().split("---")
+num_databases = 100
+print("Loading database file: ")
+databases = open(mln_database).read()
+databases = databases.strip('\n').strip(' ').strip('---').split("---")
+random.shuffle(databases)
+databases = databases[:num_databases]
 d_processed = []
-
-for d in databases:
+print("Processing databases")
+for i, d in enumerate(databases):
+    print(i / len(databases))
+    # cut out any blank databases.
+    if len(d) < 20:
+        pass
     d_processed.append(DB.parse_db(d))
-
-s = StateInfrence(os.getcwd() + '/blocks_p_decs.txt')
+print("initiating state inference")
+s = StateInfrence(os.getcwd() + '/'+domain+'_p_decs.txt')
+i = 0
+print("Initiating learning:")
 for d in d_processed:
+    print(i / len(d_processed))
+    if i % 3 == 0:
+        s.prune_weights(1)
     s.process_database(d)
+
 m = MLN()
 # m.prin
-for k, ml in s.action_mln.items():
+print("writing results")
+for k in iter(s.action_weights):
     print("============[ ", k, " ]============")
 
-    for i, val in enumerate(ml.weights):
-        print(val, "    ", k, " => ", s.action_weights[k][i].mln_type())
+    for i, p in enumerate(s.action_weights[k]):
+        print(p.weight, "    ", s.actions[k].mln_type(), " => ", p.mln_type())
 # print("done")
 # result=mln.learn(db)
 #

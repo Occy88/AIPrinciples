@@ -243,9 +243,10 @@ class Database:
         s = set()
         for p in chain(self.state, self.pos_effects, self.neg_effects):
             # TODO exclusion should not be limited to on? thi is to be discussed
-            if len(self.action.arg_set.intersection(p.arg_set)) > 0 and len(
-                    p.arg_set.difference(self.action.arg_set)) < 2:
-                s.add(p)
+            s.add(p)
+            # if len(self.action.arg_set.intersection(p.arg_set)) > 0 and len(
+            #         p.arg_set.difference(self.action.arg_set)) < 2:
+            #     s.add(p)
 
         return s
 
@@ -296,6 +297,7 @@ class StateInfrence:
         self.action_weights = dict()
         self.action_rejected_weights = dict()
         self.action_pending_weights = dict()
+        self.actions = dict()
         self.logic = 'FirstOrderLogic'
         self.grammar = 'StandardGrammar'
         self.method = 'pseudo-log-likelihood'
@@ -305,14 +307,18 @@ class StateInfrence:
         self._new_action_process(db)
 
     def update_mln(self):
+        print("UPDATING MLN")
         action = self.db.action
         # if action.name not in self.action_mln:
 
         predicates = open(self.predicate_file).read() + "\n\n// formulas: \n"
         weights = self.gen_weights(action)
         open('tmp.mln', 'w').write(predicates + weights)
-
-        m = MLN(self.logic, self.grammar, mlnfile='tmp.mln')
+        try:
+            m = MLN(self.logic, self.grammar, mlnfile='tmp.mln')
+        except Exception as e:
+            print(e)
+            return
         for i, w in enumerate(m.weights):
             m.weights[i] = float(w)
         # m.weights[1]=1
@@ -336,16 +342,37 @@ class StateInfrence:
     #     p_str=''
     #     for p in preds:
     #         p_str+=p.mln_type()
+    def prune_weights(self, threshold):
+        """
+        Prunes weights, (adds them to rejected weights), this is to speed up
+        training if some weights go below a given threshold.
+        Args:
+            threshold:
+        Returns: None
+        """
+        for action_name, weights in self.action_weights.items():
+            accepted = []
+            # accepted_w=[]
+            for p in weights:
+                if p.weight < threshold:
+                    self.action_rejected_weights[action_name].append(p)
+                else:
+                    accepted.append(p)
+                    # accepted_w.append(p.weight)
+            self.action_weights[action_name] = accepted
+
     def insert_weights(self):
         db = self.db
         relevant_weights = db.relevant_state_predicates
         # existing_weights=self.action_weights[db.action]
         # existing_rejected_weidghts=self.action_rejected_weights[db.action]
+        db.action.arg_types = Predicate.matching_as_variables(db.action, db.action)
+
         if db.action.name not in self.action_weights:
             self.action_weights[db.action.name] = []
             self.action_pending_weights[db.action.name] = []
             self.action_rejected_weights[db.action.name] = []
-        db.action.arg_types = Predicate.matching_as_variables(db.action, db.action)
+            self.actions[db.action.name] = db.action
         for w in relevant_weights:
             w.arg_types = Predicate.matching_as_variables(db.action, w)
             if w in self.action_rejected_weights[db.action.name] or \

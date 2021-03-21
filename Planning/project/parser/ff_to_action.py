@@ -1,6 +1,7 @@
 import os
-from Planning.project.parser.action import Action
+from parser.action import Action
 import json
+import time
 
 
 # definition of an action
@@ -64,15 +65,19 @@ class FFToActionParser:
         """
         writes output to json saves each output into a new state file.
         """
+        print("=================================")
+        print(os.getcwd())
         os.chdir('./parser/plan_traces')
+
         os.popen('rm -rf ' + problem + ' ; mkdir ' + problem)
         print(os.getcwd())
         for name in os.listdir('../../solver/plans/' + problem):
+            print(name)
             f = open('../../solver/plans/' + problem + '/' + name)
             text = f.read()
             f.close()
             parsed = self._parse_text(text)
-            f = open('./' + problem + '/' + name, 'w')
+            f = open('./' + problem + '/' + name, 'w+')
             print(parsed)
             f.write(json.dumps(parsed))
             f.close()

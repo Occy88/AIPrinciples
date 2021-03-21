@@ -1,0 +1,28 @@
+step    0: MOVE F3-2F F2-2F
+        1: MOVE F2-2F F2-3F
+        2: MOVE F2-3F F2-4F
+        3: MOVE F2-4F F2-5F
+        4: PICKUP F2-5F KEY3-1
+        5: MOVE F2-5F F1-5F
+        6: MOVE F1-5F F1-4F
+        7: MOVE F1-4F F1-3F
+        8: MOVE F1-3F F1-2F
+        9: MOVE F1-2F F1-1F
+       10: PUTDOWN F1-1F KEY3-1
+       11: MOVE F1-1F F2-1F
+       12: MOVE F2-1F F3-1F
+       13: MOVE F3-1F F3-2F
+       14: MOVE F3-2F F3-3F
+       15: MOVE F3-3F F3-4F
+       16: MOVE F3-4F F3-5F
+       17: PICKUP F3-5F KEY3-0
+       18: MOVE F3-5F F2-5F
+       19: MOVE F2-5F F1-5F
+       20: MOVE F1-5F F1-4F
+       21: MOVE F1-4F F1-3F
+       22: MOVE F1-3F F1-2F
+       23: MOVE F1-2F F1-1F
+       24: PUTDOWN F1-1F KEY3-0
+     
+
+time spent:    0.00 seconds instantiating 420 easy, 0 hard action templates

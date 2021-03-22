@@ -7,7 +7,7 @@ mln_database = 'mln_db.mln'
 logic = 'FirstOrderLogic'
 grammar = 'StandardGrammar'
 method = 'pseudo-log-likelihood'
-domain='grid'
+domain = 'grid'
 from pracmln import Database
 import numpy as np
 
@@ -38,16 +38,20 @@ for i, d in enumerate(databases):
         pass
     d_processed.append(DB.parse_db(d))
 print("initiating state inference")
-s = StateInfrence(os.getcwd() + '/'+domain+'_p_decs.txt')
-i = 0
+s = StateInfrence(os.getcwd() + '/' + domain + '_p_decs.txt')
 print("Initiating learning:")
-for d in d_processed:
+opt_tracker = dict()
+for i, d in enumerate(d_processed):
+    print("=========[ processing db: ", d.action.name, i, '/', len(d_processed), ' ]===========')
+    if d.action.name not in opt_tracker:
+        opt_tracker[d.action.name] = 1
+    d.noise(0.3)
     print(i / len(d_processed))
-    if i % 3 == 0:
-        s.prune_weights(1)
     s.process_database(d)
-
-m = MLN()
+    s.update_data_for_graph(i)
+    s.prune_weights(1)
+    opt_tracker[d.action.name] += 1
+s.plot()
 # m.prin
 print("writing results")
 for k in iter(s.action_weights):

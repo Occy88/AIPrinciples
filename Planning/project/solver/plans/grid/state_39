@@ -1,28 +1,45 @@
-step    0: MOVE F2-3F F2-4F
-        1: MOVE F2-4F F3-4F
-        2: MOVE F3-4F F4-4F
-        3: MOVE F4-4F F4-5F
-        4: PICKUP F4-5F KEY3-0
-        5: MOVE F4-5F F4-4F
-        6: MOVE F4-4F F3-4F
-        7: MOVE F3-4F F2-4F
-        8: UNLOCK F2-4F F2-5F KEY3-0 SHAPE3
-        9: MOVE F2-4F F2-5F
-       10: UNLOCK F2-5F F3-5F KEY3-0 SHAPE3
-       11: PUTDOWN F2-5F KEY3-0
-       12: MOVE F2-5F F1-5F
-       13: MOVE F1-5F F1-4F
-       14: MOVE F1-4F F1-3F
-       15: MOVE F1-3F F1-2F
-       16: PICKUP F1-2F KEY3-1
-       17: MOVE F1-2F F2-2F
-       18: MOVE F2-2F F3-2F
-       19: MOVE F3-2F F4-2F
-       20: MOVE F4-2F F5-2F
-       21: MOVE F5-2F F5-3F
-       22: MOVE F5-3F F5-4F
-       23: MOVE F5-4F F5-5F
-       24: PUTDOWN F5-5F KEY3-1
+step    0: MOVE F3-4F F4-4F
+        1: MOVE F4-4F F4-3F
+        2: MOVE F4-3F F4-2F
+        3: MOVE F4-2F F4-1F
+        4: MOVE F4-1F F3-1F
+        5: MOVE F3-1F F2-1F
+        6: MOVE F2-1F F1-1F
+        7: PICKUP F1-1F KEY3-1
+        8: MOVE F1-1F F2-1F
+        9: MOVE F2-1F F3-1F
+       10: MOVE F3-1F F3-0F
+       11: MOVE F3-0F F2-0F
+       12: MOVE F2-0F F1-0F
+       13: MOVE F1-0F F0-0F
+       14: MOVE F0-0F F0-1F
+       15: MOVE F0-1F F0-2F
+       16: MOVE F0-2F F0-3F
+       17: UNLOCK F0-3F F0-4F KEY3-1 SHAPE3
+       18: MOVE F0-3F F1-3F
+       19: MOVE F1-3F F2-3F
+       20: MOVE F2-3F F2-2F
+       21: MOVE F2-2F F2-1F
+       22: MOVE F2-1F F2-0F
+       23: MOVE F2-0F F3-0F
+       24: PUTDOWN F3-0F KEY3-1
+       25: MOVE F3-0F F2-0F
+       26: MOVE F2-0F F1-0F
+       27: MOVE F1-0F F0-0F
+       28: MOVE F0-0F F0-1F
+       29: MOVE F0-1F F0-2F
+       30: MOVE F0-2F F0-3F
+       31: MOVE F0-3F F0-4F
+       32: PICKUP F0-4F KEY3-0
+       33: MOVE F0-4F F1-4F
+       34: MOVE F1-4F F1-3F
+       35: MOVE F1-3F F2-3F
+       36: MOVE F2-3F F3-3F
+       37: MOVE F3-3F F4-3F
+       38: MOVE F4-3F F4-2F
+       39: MOVE F4-2F F4-1F
+       40: MOVE F4-1F F4-0F
+       41: PUTDOWN F4-0F KEY3-0
      
 
-time spent:    0.00 seconds instantiating 420 easy, 0 hard action templates
+time spent:    0.00 seconds instantiating 290 easy, 0 hard action templates

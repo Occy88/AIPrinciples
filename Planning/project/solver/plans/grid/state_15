@@ -1,30 +1,26 @@
-step    0: PICKUP F2-5F KEY3-0
-        1: MOVE F2-5F F1-5F
-        2: MOVE F1-5F F1-4F
-        3: MOVE F1-4F F1-3F
-        4: MOVE F1-3F F1-2F
-        5: MOVE F1-2F F1-1F
-        6: UNLOCK F1-1F F0-1F KEY3-0 SHAPE3
-        7: MOVE F1-1F F2-1F
-        8: MOVE F2-1F F3-1F
-        9: MOVE F3-1F F3-2F
-       10: MOVE F3-2F F3-3F
-       11: MOVE F3-3F F3-4F
-       12: MOVE F3-4F F3-5F
-       13: MOVE F3-5F F4-5F
-       14: MOVE F4-5F F5-5F
-       15: PUTDOWN F5-5F KEY3-0
-       16: MOVE F5-5F F4-5F
-       17: PICKUP F4-5F KEY3-1
-       18: MOVE F4-5F F3-5F
-       19: MOVE F3-5F F2-5F
-       20: MOVE F2-5F F1-5F
-       21: MOVE F1-5F F1-4F
-       22: MOVE F1-4F F1-3F
-       23: MOVE F1-3F F1-2F
-       24: MOVE F1-2F F1-1F
-       25: MOVE F1-1F F0-1F
-       26: PUTDOWN F0-1F KEY3-1
+step    0: MOVE F0-1F F0-2F
+        1: MOVE F0-2F F1-2F
+        2: MOVE F1-2F F2-2F
+        3: MOVE F2-2F F2-1F
+        4: MOVE F2-1F F3-1F
+        5: PICKUP F3-1F KEY3-0
+        6: UNLOCK F3-1F F3-2F KEY3-0 SHAPE3
+        7: MOVE F3-1F F3-2F
+        8: MOVE F3-2F F3-3F
+        9: MOVE F3-3F F3-4F
+       10: PICKUP-AND-LOOSE F3-4F KEY3-1 KEY3-0
+       11: MOVE F3-4F F2-4F
+       12: MOVE F2-4F F2-3F
+       13: PUTDOWN F2-3F KEY3-1
+       14: MOVE F2-3F F3-3F
+       15: MOVE F3-3F F3-4F
+       16: PICKUP F3-4F KEY3-0
+       17: MOVE F3-4F F2-4F
+       18: MOVE F2-4F F1-4F
+       19: MOVE F1-4F F0-4F
+       20: MOVE F0-4F F0-3F
+       21: MOVE F0-3F F0-2F
+       22: PUTDOWN F0-2F KEY3-0
      
 
-time spent:    0.00 seconds instantiating 422 easy, 0 hard action templates
+time spent:    0.00 seconds instantiating 294 easy, 0 hard action templates

@@ -224,6 +224,8 @@ class State:
 from pracmln import MLN
 from itertools import chain
 
+import random
+
 
 class Database:
     def __init__(self, action: Predicate, state: set, pos_effects: set, neg_effects: set):
@@ -233,6 +235,38 @@ class Database:
         self.neg_effects = neg_effects
         # precompute s why not...
         self.relevant_state_predicates = self.get_relevant_state_predicates()
+
+    def noise(self, prob):
+        """
+        removes percentage of predicates from database
+        Args:
+            prob: probability predicate is removed 0->1
+
+        Returns:
+
+        """
+
+        def p(plist):
+            return int(len(plist) * (1 - prob))
+
+        def samp(plist):
+            return random.sample(plist, p(plist))
+
+        self.state = samp(self.state)
+        self.pos_effects = samp(self.pos_effects)
+        self.neg_effects = samp(self.neg_effects)
+
+    def syste_noise(self, p_name, prob):
+        def p(pset):
+            rep = set()
+            for i, val in enumerate(pset):
+                if val.name == p_name and random.random() > prob:
+                    rep.add(val)
+            return rep
+
+        self.state = p(self.state)
+        self.state = p(self.neg_effects)
+        self.state = p(self.pos_effects)
 
     def get_relevant_state_predicates(self):
         """
@@ -301,6 +335,7 @@ class StateInfrence:
         self.logic = 'FirstOrderLogic'
         self.grammar = 'StandardGrammar'
         self.method = 'pseudo-log-likelihood'
+        self.data_for_graph = dict()
         pass
 
     def process_database(self, db: Database):
@@ -404,3 +439,37 @@ class StateInfrence:
         self.db = db
         self.insert_weights()  # CREATES MLN'S
         self.update_mln()
+
+    def update_data_for_graph(self, run):
+        """
+        data is in the shape:
+        action name:
+        predicate_name weight run
+        predicate_name weight run
+        ...
+        action name:
+        predicate_name weight run
+        predicate_name weight run
+        ...
+        """
+        for a in self.action_weights:
+            if a not in self.data_for_graph:
+                self.data_for_graph[a] = dict()
+            for p in self.action_weights[a]:
+                k = p.mln()
+                if k not in self.data_for_graph[a]:
+                    self.data_for_graph[a][k] = []
+                self.data_for_graph[a][k].append([p.weight, run])
+
+    def plot(self):
+        import numpy as np
+        import matplotlib.pyplot as plt
+        for a in self.data_for_graph:
+            to_plot = []
+            for p in self.data_for_graph[a]:
+                p = np.array(p)
+                p.transpose()
+                to_plot.append(p)
+            for p in to_plot:
+                plt.plot(p[1], p[0])
+            plt.show()

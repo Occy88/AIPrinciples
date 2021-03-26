@@ -466,6 +466,8 @@ class StateInfrence:
                 if k not in self.data_for_graph[a]:
                     # fill all missed runs with 'NaN' value.
                     self.data_for_graph[a][k] = [np.nan] * run
+                if len(self.data_for_graph[a][k])>100:
+                    pass
                 self.data_for_graph[a][k].append(p.weight)
             for p in self.action_rejected_weights[a].values():
                 k = p.mln()

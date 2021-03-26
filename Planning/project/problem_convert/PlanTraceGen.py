@@ -372,7 +372,8 @@ class StateInfrence:
         self.action_mln[action.name] = res
         return res
 
-    # def gen_predicates(self,action:Predicate):
+    # def gen_predicates(self,action:Predicate):def preprocessor(X):
+    #     return preprocess_images(X, (32, 32, 3), clean_img)
     #     preds = Predicate.unique_by_name(self.action_weights[action.name])
     #     p_str=''
     #     for p in preds:

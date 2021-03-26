@@ -1,7 +1,7 @@
 
 
 
-(define (problem grid-x5-y5-t4-k2-l2-p100)
+(define (problem grid-x5-y5-t15-k20-l20-p100)
 (:domain grid)
 (:objects 
         f0-0f f1-0f f2-0f f3-0f f4-0f 
@@ -9,8 +9,8 @@
         f0-2f f1-2f f2-2f f3-2f f4-2f 
         f0-3f f1-3f f2-3f f3-3f f4-3f 
         f0-4f f1-4f f2-4f f3-4f f4-4f 
-        shape0 shape1 shape2 shape3 
-        key3-0 key3-1 
+        shape0 shape1 shape2 shape3 shape4 shape5 shape6 shape7 shape8 shape9 shape10 shape11 shape12 shape13 shape14 
+        key13-0 key13-1 
 )
 (:init
 (arm-empty)
@@ -43,10 +43,21 @@
 (shape shape1)
 (shape shape2)
 (shape shape3)
-(key key3-0)
-(key-shape key3-0 shape3)
-(key key3-1)
-(key-shape key3-1 shape3)
+(shape shape4)
+(shape shape5)
+(shape shape6)
+(shape shape7)
+(shape shape8)
+(shape shape9)
+(shape shape10)
+(shape shape11)
+(shape shape12)
+(shape shape13)
+(shape shape14)
+(key key13-0)
+(key-shape key13-0 shape13)
+(key key13-1)
+(key-shape key13-1 shape13)
 (conn f0-0f f1-0f)
 (conn f1-0f f2-0f)
 (conn f2-0f f3-0f)
@@ -135,11 +146,11 @@
 (open f0-1f)
 (open f1-1f)
 (open f2-1f)
-(open f3-1f)
 (open f4-1f)
 (open f0-2f)
-(open f1-2f)
+(open f2-2f)
 (open f3-2f)
+(open f4-2f)
 (open f0-3f)
 (open f1-3f)
 (open f2-3f)
@@ -150,18 +161,18 @@
 (open f2-4f)
 (open f3-4f)
 (open f4-4f)
-(locked f4-2f)
-(lock-shape f4-2f shape3)
-(locked f2-2f)
-(lock-shape f2-2f shape3)
-(at key3-0 f4-4f)
-(at key3-1 f2-3f)
-(at-robot f3-3f)
+(locked f1-2f)
+(lock-shape f1-2f shape13)
+(locked f3-1f)
+(lock-shape f3-1f shape13)
+(at key13-0 f1-3f)
+(at key13-1 f4-0f)
+(at-robot f2-0f)
 )
 (:goal
 (and
-(at key3-0 f2-1f)
-(at key3-1 f0-0f)
+(at key13-0 f1-2f)
+(at key13-1 f0-1f)
 )
 )
 )

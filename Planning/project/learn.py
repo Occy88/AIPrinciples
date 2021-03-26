@@ -11,13 +11,13 @@ domain = 'grid'
 from pracmln import Database
 import numpy as np
 
-
-# print(np.exp(10),np.exp(100),np.exp(1000),np.exp(100000000000))
-class pr():
-    def write(self, *args, **kwargs):
-        print(args, kwargs)
-
-
+#
+# # print(np.exp(10),np.exp(100),np.exp(1000),np.exp(100000000000))
+# class pr():
+#     def write(self, *args, **kwargs):
+#         print(args, kwargs)
+#
+#
 from problem_convert.PlanTraceGen import StateInfrence
 from problem_convert.PlanTraceGen import Database as DB
 import os
@@ -49,16 +49,20 @@ for i, d in enumerate(d_processed):
     print(i / len(d_processed))
     s.process_database(d)
     s.update_data_for_graph(i)
-    s.prune_weights(1)
+    if i % 2 and not i == 0:
+        s.prune_weights(2)
     opt_tracker[d.action.name] += 1
+s.save_data_for_graphing()
+s = StateInfrence(os.getcwd() + '/' + domain + '_p_decs.txt')
+
 s.plot()
 # m.prin
 print("writing results")
-for k in iter(s.action_weights):
-    print("============[ ", k, " ]============")
-
-    for i, p in enumerate(s.action_weights[k]):
-        print(p.weight, "    ", s.actions[k].mln_type(), " => ", p.mln_type())
+# for k in iter(s.action_weights):
+#     print("============[ ", k, " ]============")
+#
+#     for i, p in enumerate(s.action_weights[k]):
+#         print(p.weight, "    ", s.actions[k].mln_type(), " => ", p.mln_type())
 # print("done")
 # result=mln.learn(db)
 #

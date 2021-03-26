@@ -22,6 +22,7 @@ class Solver:
             # print(solution_dir)
             # print(os.getcwd())
             command = './ff -o ' + domain + ' -f ' + '../../generator/' + problem + '/states/' + s + '| sed -n "/step/,/time/p" > ' + solution_dir + '/' + s
+            # command = './ff -o ' + domain + ' -f ' + '../../generator/' + problem + '/states/' + s + ' > ' + solution_dir + '/' + s
             # print(command)
             os.popen(command).read()
         os.chdir("../../")

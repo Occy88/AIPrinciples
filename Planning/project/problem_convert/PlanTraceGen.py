@@ -322,6 +322,11 @@ class Database:
 
 from pracmln.mln.database import Database as DB
 
+import json
+
+import numpy as np
+import matplotlib.pyplot as plt
+
 
 class StateInfrence:
     def __init__(self, predicate_file):
@@ -391,8 +396,8 @@ class StateInfrence:
             # accepted_w=[]
             for p in weights:
                 if p.weight < threshold:
-                    self.action_rejected_weights[action_name].append(p)
-                else:
+                    self.action_rejected_weights[action_name][p] = p
+                elif p not in self.action_rejected_weights[action_name]:
                     accepted.append(p)
                     # accepted_w.append(p.weight)
             self.action_weights[action_name] = accepted
@@ -407,7 +412,7 @@ class StateInfrence:
         if db.action.name not in self.action_weights:
             self.action_weights[db.action.name] = []
             self.action_pending_weights[db.action.name] = []
-            self.action_rejected_weights[db.action.name] = []
+            self.action_rejected_weights[db.action.name] = dict()
             self.actions[db.action.name] = db.action
         for w in relevant_weights:
             w.arg_types = Predicate.matching_as_variables(db.action, w)
@@ -459,18 +464,36 @@ class StateInfrence:
             for p in self.action_weights[a]:
                 k = p.mln()
                 if k not in self.data_for_graph[a]:
-                    self.data_for_graph[a][k] = []
-                self.data_for_graph[a][k].append([p.weight, run])
+                    # fill all missed runs with 'NaN' value.
+                    self.data_for_graph[a][k] = [np.nan] * run
+                self.data_for_graph[a][k].append(p.weight)
+            for p in self.action_rejected_weights[a].values():
+                k = p.mln()
+                self.data_for_graph[a][k].append(np.nan)
+
+    def save_data_for_graphing(self):
+        f = open('graph_data', 'w+')
+        f.write(json.dumps(self.data_for_graph))
+    def count_nan(self,li):
+        t=0
+        for v in li:
+            if np.isnan(v):
+                t+=1
+        return t
 
     def plot(self):
-        import numpy as np
-        import matplotlib.pyplot as plt
-        for a in self.data_for_graph:
-            to_plot = []
-            for p in self.data_for_graph[a]:
-                p = np.array(p)
-                p.transpose()
-                to_plot.append(p)
-            for p in to_plot:
-                plt.plot(p[1], p[0])
+        d = json.loads(open('graph_data', 'r').read())
+        print(d)
+        for k in d:
+            a = d[k]
+            for key, val in a.items():
+                if len(val) > 100:
+                    print("-----------------")
+                    print(len(val), key)
+                label=key if self.count_nan(val) < len(val) * 0.5 else None
+                plt.plot(list(range(0, len(val))), val, 'o-',label=label)
+                # break
+            plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left',fontsize='xx-small')
+            plt.savefig('graph.png', dpi=600)
             plt.show()
+            # break

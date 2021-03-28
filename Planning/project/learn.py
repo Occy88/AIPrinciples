@@ -42,15 +42,18 @@ s = StateInfrence(os.getcwd() + '/' + domain + '_p_decs.txt')
 print("Initiating learning:")
 opt_tracker = dict()
 for i, d in enumerate(d_processed):
+    # systematic noise on move function
+    if d.action.name=='move':
+        d.syste_noise('conn',0.6)
     print("=========[ processing db: ", d.action.name, i, '/', len(d_processed), ' ]===========')
     if d.action.name not in opt_tracker:
         opt_tracker[d.action.name] = 1
     d.noise(0.3)
     print(i / len(d_processed))
     s.process_database(d)
-    s.update_data_for_graph(i)
-    if i % 2 and not i == 0:
-        s.prune_weights(2)
+    # s.update_data_for_graph(i)
+    # if opt_tracker[d.action.name] % 5 and not opt_tracker[d.action.name] == 0:
+    #     s.prune_weights(d.action.name,2)
     opt_tracker[d.action.name] += 1
 s.save_data_for_graphing()
 s = StateInfrence(os.getcwd() + '/' + domain + '_p_decs.txt')

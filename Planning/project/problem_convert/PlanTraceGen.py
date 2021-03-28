@@ -14,7 +14,7 @@ class Predicate:
         if cap_args:
             args = list(map(lambda x: x.capitalize(), self.args))
         args += extra_args
-        return self.name + '(' + ', '.join(args) + ')'
+        return self.name + '(' + ','.join(args) + ')'
 
     def mln(self, cap_args=False, extra_args=[]):
         return self._get_mln_str(self.args, cap_args, extra_args)
@@ -265,8 +265,8 @@ class Database:
             return rep
 
         self.state = p(self.state)
-        self.state = p(self.neg_effects)
-        self.state = p(self.pos_effects)
+        self.neg_effects = p(self.neg_effects)
+        self.pos_effects = p(self.pos_effects)
 
     def get_relevant_state_predicates(self):
         """
@@ -277,10 +277,10 @@ class Database:
         s = set()
         for p in chain(self.state, self.pos_effects, self.neg_effects):
             # TODO exclusion should not be limited to on? thi is to be discussed
-            s.add(p)
-            # if len(self.action.arg_set.intersection(p.arg_set)) > 0 and len(
-            #         p.arg_set.difference(self.action.arg_set)) < 2:
-            #     s.add(p)
+            # s.add(p)
+            if len(self.action.arg_set.intersection(p.arg_set)) > 0 and len(
+                    p.arg_set.difference(self.action.arg_set)) < 2:
+                s.add(p)
 
         return s
 
@@ -326,6 +326,13 @@ import json
 
 import numpy as np
 import matplotlib.pyplot as plt
+from pracmln import MLNQuery
+
+
+def center(A):
+    if type(A) != np.ndarray:
+        A = np.array(A)
+    return A - ((np.max(A) - np.min(A)) / 2)
 
 
 class StateInfrence:
@@ -341,6 +348,7 @@ class StateInfrence:
         self.grammar = 'StandardGrammar'
         self.method = 'pseudo-log-likelihood'
         self.data_for_graph = dict()
+        self.db_run = dict()
         pass
 
     def process_database(self, db: Database):
@@ -369,10 +377,16 @@ class StateInfrence:
         db = DB.load(m, 'tmp_db.mln')
 
         res = m.learn(db)
-        for i, w in enumerate(res.weights):
-            self.action_weights[self.db.action.name][i].weight += w
-            res.weights[i] += self.action_weights[self.db.action.name][i].weight
-        print(res.weights)
+        # r = MLNQuery(mln=res, db=db[0]).run()
+        # prev_weights = list(map(lambda a: a.weight, self.action_weights[self.db.action.name].values()))
+
+        weights_std = center(res.weights)
+        # weights_std = weights_std[:-len(prev_weights)]
+        for i, form in enumerate(res.weighted_formulas):
+            predicate_key = str(form.children[1])
+            self.action_weights[self.db.action.name][predicate_key].weight += weights_std[i]
+            # res.weights[i] += self.action_weights[self.db.action.name][predicate_key].weight
+        # print(res.weights)
         # res.weights[3] = 2
         self.action_mln[action.name] = res
         return res
@@ -383,7 +397,7 @@ class StateInfrence:
     #     p_str=''
     #     for p in preds:
     #         p_str+=p.mln_type()
-    def prune_weights(self, threshold):
+    def prune_weights(self, action_name, threshold):
         """
         Prunes weights, (adds them to rejected weights), this is to speed up
         training if some weights go below a given threshold.
@@ -391,16 +405,16 @@ class StateInfrence:
             threshold:
         Returns: None
         """
-        for action_name, weights in self.action_weights.items():
-            accepted = []
-            # accepted_w=[]
-            for p in weights:
-                if p.weight < threshold:
-                    self.action_rejected_weights[action_name][p] = p
-                elif p not in self.action_rejected_weights[action_name]:
-                    accepted.append(p)
-                    # accepted_w.append(p.weight)
-            self.action_weights[action_name] = accepted
+        weights = self.action_weights[action_name]
+        accepted = dict()
+        # accepted_w=[]
+        for p_name, p in weights.items():
+            if p.weight < threshold:
+                self.action_rejected_weights[action_name][p.mln_type()] = p
+            elif p.mln_type() not in self.action_rejected_weights[action_name]:
+                accepted[p.mln_type()] = p
+                # accepted_w.append(p.weight)
+        self.action_weights[action_name] = accepted
 
     def insert_weights(self):
         db = self.db
@@ -410,22 +424,21 @@ class StateInfrence:
         db.action.arg_types = Predicate.matching_as_variables(db.action, db.action)
 
         if db.action.name not in self.action_weights:
-            self.action_weights[db.action.name] = []
-            self.action_pending_weights[db.action.name] = []
+            self.action_weights[db.action.name] = dict()
+            self.action_pending_weights[db.action.name] = dict()
             self.action_rejected_weights[db.action.name] = dict()
             self.actions[db.action.name] = db.action
         for w in relevant_weights:
             w.arg_types = Predicate.matching_as_variables(db.action, w)
-            if w in self.action_rejected_weights[db.action.name] or \
-                    Predicate.exists_in_list_by_properties(w,
-                                                           self.action_weights[db.action.name],
-                                                           ['name', 'arg_types']):
+            if w.mln_type() in self.action_rejected_weights[db.action.name] or w.mln_type() in self.action_weights[
+                db.action.name]:
                 continue
-            self.action_weights[db.action.name].append(w)
+            else:
+                self.action_weights[db.action.name][w.mln_type()] = w
 
     def gen_weights(self, action: Predicate):
         s = ""
-        for w in self.action_weights[action.name]:
+        for k, w in self.action_weights[action.name].items():
             s += str(w.weight) + "    " + action.mln_type() + " => " + w.mln_type() + '\n'
         # print(s)
         return s
@@ -445,8 +458,9 @@ class StateInfrence:
         self.db = db
         self.insert_weights()  # CREATES MLN'S
         self.update_mln()
+        self.update_data_for_graph()
 
-    def update_data_for_graph(self, run):
+    def update_data_for_graph(self):
         """
         data is in the shape:
         action name:
@@ -458,29 +472,37 @@ class StateInfrence:
         predicate_name weight run
         ...
         """
-        for a in self.action_weights:
-            if a not in self.data_for_graph:
-                self.data_for_graph[a] = dict()
-            for p in self.action_weights[a]:
-                k = p.mln()
-                if k not in self.data_for_graph[a]:
-                    # fill all missed runs with 'NaN' value.
-                    self.data_for_graph[a][k] = [np.nan] * run
-                if len(self.data_for_graph[a][k])>100:
-                    pass
-                self.data_for_graph[a][k].append(p.weight)
-            for p in self.action_rejected_weights[a].values():
-                k = p.mln()
-                self.data_for_graph[a][k].append(np.nan)
+
+        a = self.db.action.name
+        if a not in self.data_for_graph:
+            self.db_run[a] = 0
+            self.data_for_graph[a] = dict()
+        else:
+            self.db_run[a] += 1
+        for k, p in self.action_weights[a].items():
+            if k not in self.data_for_graph[a]:
+                # fill all missed runs with 'NaN' value.
+                self.data_for_graph[a][k] = [np.nan] * self.db_run[a]
+            if len(self.data_for_graph[a][k]) > 100:
+                print("longer: ", k, '  ', len(self.data_for_graph[a][k]))
+                pass
+            self.data_for_graph[a][k].append(p.weight)
+
+        for k, p in self.action_rejected_weights[a].items():
+            if len(self.data_for_graph[a][k]) > 100:
+                print("longer-nan: ", k, '  ', len(self.data_for_graph[a][k]))
+                pass
+            self.data_for_graph[a][k].append(np.nan)
 
     def save_data_for_graphing(self):
         f = open('graph_data', 'w+')
         f.write(json.dumps(self.data_for_graph))
-    def count_nan(self,li):
-        t=0
+
+    def count_nan(self, li):
+        t = 0
         for v in li:
             if np.isnan(v):
-                t+=1
+                t += 1
         return t
 
     def plot(self):
@@ -492,10 +514,13 @@ class StateInfrence:
                 if len(val) > 100:
                     print("-----------------")
                     print(len(val), key)
-                label=key if self.count_nan(val) < len(val) * 0.5 else None
-                plt.plot(list(range(0, len(val))), val, 'o-',label=label)
+                label = key if self.count_nan(val) < len(val) * 0.5 else None
+                plt.plot(list(range(0, len(val))), val, 'o-', label=label)
                 # break
-            plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left',fontsize='xx-small')
+            plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', fontsize='xx-small')
+            print(k)
+            plt.title(k)
+            plt.subplots_adjust(right=0.7,top=0.8)
             plt.savefig('graph.png', dpi=600)
             plt.show()
             # break

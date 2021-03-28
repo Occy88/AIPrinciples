@@ -44,7 +44,7 @@ opt_tracker = dict()
 for i, d in enumerate(d_processed):
     # systematic noise on move function
     if d.action.name=='move':
-        d.syste_noise('conn',0.6)
+        d.syste_noise('conn(V0,V1,0)',0.2)
     print("=========[ processing db: ", d.action.name, i, '/', len(d_processed), ' ]===========')
     if d.action.name not in opt_tracker:
         opt_tracker[d.action.name] = 1

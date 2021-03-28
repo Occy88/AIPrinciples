@@ -234,6 +234,9 @@ class Database:
         self.pos_effects = pos_effects
         self.neg_effects = neg_effects
         # precompute s why not...
+        self.update_relevant_state_predicates()
+        pass
+    def update_relevant_state_predicates(self):
         self.relevant_state_predicates = self.get_relevant_state_predicates()
 
     def noise(self, prob):
@@ -255,18 +258,26 @@ class Database:
         self.state = samp(self.state)
         self.pos_effects = samp(self.pos_effects)
         self.neg_effects = samp(self.neg_effects)
+        self.update_relevant_state_predicates()
 
     def syste_noise(self, p_name, prob):
         def p(pset):
             rep = set()
             for i, val in enumerate(pset):
-                if val.name == p_name and random.random() > prob:
+                p = random.random()
+                val.arg_types = Predicate.matching_as_variables(self.action, val)
+                nm=val.mln_type()
+                if val.mln_type() == p_name:
+                    if p < prob:
+                        rep.add(val)
+                else:
                     rep.add(val)
             return rep
 
         self.state = p(self.state)
         self.neg_effects = p(self.neg_effects)
         self.pos_effects = p(self.pos_effects)
+        self.update_relevant_state_predicates()
 
     def get_relevant_state_predicates(self):
         """
@@ -520,7 +531,7 @@ class StateInfrence:
             plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', fontsize='xx-small')
             print(k)
             plt.title(k)
-            plt.subplots_adjust(right=0.7,top=0.8)
+            plt.subplots_adjust(right=0.7, top=0.8)
             plt.savefig('graph.png', dpi=600)
             plt.show()
             # break

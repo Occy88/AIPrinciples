@@ -391,7 +391,7 @@ class StateInfrence:
         open('tmp_db.mln', 'w').write(self.db.mln_db())
         db = DB.load(m, 'tmp_db.mln')
         self.action_dbs[self.db.action.name].append(db)
-        res = m.learn(self.action_dbs[self.db.action.name])
+        res = m.learn(db)
         # r = MLNQuery(mln=res, db=db[0]).run()
         # prev_weights = list(map(lambda a: a.weight, self.action_weights[self.db.action.name].values()))
 

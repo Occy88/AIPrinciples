@@ -36,18 +36,22 @@ for i, d in enumerate(databases):
     # cut out any blank databases.
     if len(d) < 20:
         pass
+
     d_processed.append(DB.parse_db(d))
 print("initiating state inference")
 s = StateInfrence(os.getcwd() + '/' + domain + '_p_decs.txt')
 print("Initiating learning:")
 opt_tracker = dict()
 for i, d in enumerate(d_processed):
-    # systematic noise on move function
-    if d.action.name=='move':
-        d.sys_noise('conn(v0,v1,0)',0.6)
-    print("=========[ processing db: ", d.action.name, i, '/', len(d_processed), ' ]===========')
     if d.action.name not in opt_tracker:
         opt_tracker[d.action.name] = 1
+    # systematic noise on move function
+    if d.action.name == 'move':
+        d.sys_noise('conn(v0,v1,0)', 0.7)
+    else:
+        continue
+    print("=========[ processing db: ", d.action.name, i, '/', len(d_processed), ' ]===========')
+
     print(i / len(d_processed))
     s.process_database(d)
     # s.update_data_for_graph(i)

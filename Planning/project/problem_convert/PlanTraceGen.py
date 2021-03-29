@@ -377,13 +377,15 @@ class StateInfrence:
         predicates = open(self.predicate_file).read() + "\n\n// formulas: \n"
         weights = self.gen_weights(action)
         open('tmp.mln', 'w').write(predicates + weights)
-        try:
+        if action.name in self.action_mln:
+            m1 = MLN(self.logic, self.grammar, mlnfile='tmp.mln')
+            m=self.action_mln[action.name]
+            m.predicates=m1.predicates
+
+
+        else:
             m = MLN(self.logic, self.grammar, mlnfile='tmp.mln')
-        except Exception as e:
-            print(e)
-            return
-        for i, w in enumerate(m.weights):
-            m.weights[i] = float(w)
+
         # m.weights[1]=1
         # m.weights[2]=10
         # else:
@@ -391,7 +393,7 @@ class StateInfrence:
         open('tmp_db.mln', 'w').write(self.db.mln_db())
         db = DB.load(m, 'tmp_db.mln')
         self.action_dbs[self.db.action.name].append(db)
-        res = m.learn(db)
+        res = m.learn_iter(db)
         # r = MLNQuery(mln=res, db=db[0]).run()
         # prev_weights = list(map(lambda a: a.weight, self.action_weights[self.db.action.name].values()))
 
@@ -400,12 +402,13 @@ class StateInfrence:
         # weights_std = weights_std[:-len(prev_weights)]
         for i, form in enumerate(res.weighted_formulas):
             predicate_key = str(form.children[1])
-            self.action_weights[self.db.action.name][predicate_key].weight += weights_std[i]
+            self.action_weights[self.db.action.name][predicate_key].weight =res.weights[i]
             # res.weights[i] += self.action_weights[self.db.action.name][predicate_key].weight
+
         # print(res.weights)
         # res.weights[3] = 2
-        self.action_mln[action.name] = res
-        return res
+        self.action_mln[action.name] = m
+        return m
 
     # def gen_predicates(self,action:Predicate):def preprocessor(X):
     #     return preprocess_images(X, (32, 32, 3), clean_img)
@@ -540,3 +543,42 @@ class StateInfrence:
             plt.savefig('graph.png', dpi=600)
             plt.show()
             # break
+
+
+def update_mln():
+    print("UPDATING MLN")
+    logic = 'FirstOrderLogic'
+    grammar = 'StandardGrammar'
+    method = 'pseudo-log-likelihood'
+    m = MLN(logic, grammar, mlnfile='../tmp1.mln')
+    # m.weights[1]=1
+    # m.weights[2]=10
+    # else:
+    #     m = self.action_mln[action.name]
+    db_both = DB.load(m, '../tmp_db3.mln')
+    db_1 = DB.load(m, '../tmp_db1.mln')
+    db_2 = DB.load(m, '../tmp_db2.mln')
+    a = m.learn(db_both)
+    print(a.weights)
+    b = m.learn_iter(db_1)
+    c = m.learn_iter(db_2)
+    print("target: ",
+          [5.3619451781468195, 2.8782336808825564, -0.7494174682462591, 3.793552188739899, 3.5295832607294213,
+           13.918149709704712, 2.878233680882602, 13.918149709704519, 5.884279775032551]
+          )
+    print("value: ",c.weights)
+
+
+# update_mln()
+# action_dbs[self.db.action.name].append(db)
+# res = m.learn(self.action_dbs['move'])
+# # r = MLNQuery(mln=res, db=db[0]).run()
+# # prev_weights = list(map(lambda a: a.weight, self.action_weights[self.db.action.name].values()))
+#
+# # weights_std = center(res.weights)
+# weights_std = res.weights
+# # weights_std = weights_std[:-len(prev_weights)]
+# for i, form in enumerate(res.weighted_formulas):
+#     predicate_key = str(form.children[1])
+#     self.action_weights[self.db.action.name][predicate_key].weight += weights_std[i]
+#     # res.weights[i] += self.action_weights[self.db.action.name][predicate_key].weight

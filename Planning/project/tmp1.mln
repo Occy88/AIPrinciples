@@ -21,12 +21,12 @@ arm_empty(t)
 
 
 // formulas: 
-0.0    move(v0,v1) => conn(v1,v0,0)
-0.0    move(v0,v1) => open(v0,0)
-0.0    move(v0,v1) => at_robot(v0,-1)
-0.0    move(v0,v1) => at_robot(v0,0)
 0.0    move(v0,v1) => open(v1,0)
-0.0    move(v0,v1) => place(v1,0)
+0.0    move(v0,v1) => at_robot(v0,0)
 0.0    move(v0,v1) => conn(v0,v1,0)
-0.0    move(v0,v1) => place(v0,0)
 0.0    move(v0,v1) => at_robot(v1,1)
+0.0    move(v0,v1) => conn(v1,v0,0)
+0.0    move(v0,v1) => place(v1,0)
+0.0    move(v0,v1) => at_robot(v0,-1)
+0.0    move(v0,v1) => place(v0,0)
+0.0    move(v0,v1) => open(v0,0)

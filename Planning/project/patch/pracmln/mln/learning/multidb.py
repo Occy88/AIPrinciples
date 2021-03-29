@@ -60,7 +60,6 @@ class MultipleDatabaseLearner(AbstractLearner):
         :param **params:    additional parameters handed over to the base
                             learners.
         '''
-
         self.dbs = dbs
         self._params = edict(params)
         if not mln_._materialized:
@@ -72,9 +71,10 @@ class MultipleDatabaseLearner(AbstractLearner):
         self.watch.tag('setup learners', verbose=self.verbose)
         if self.verbose:
             bar = ProgressBar(steps=len(dbs), color='green')
+        print(self.multicore)
         if self.multicore:
             pool = Pool(maxtasksperchild=1)
-            logger.debug('Setting up multi-core processing for {} cores'.format(pool._processes))
+            print('Setting up multi-core processing for {} cores'.format(pool._processes))
             try:
                 for i, learner in pool.imap(with_tracing(_setup_learner), self._iterdbs(method)):
                     self.learners[i] = learner

@@ -112,7 +112,7 @@ class Predicate:
             if int(v) < 0:
                 matching_v.append(p_child.args[i])
             else:
-                matching_v.append('V' + str(v))
+                matching_v.append('v' + str(v))
         return matching_v
 
     @staticmethod
@@ -236,6 +236,7 @@ class Database:
         # precompute s why not...
         self.update_relevant_state_predicates()
         pass
+
     def update_relevant_state_predicates(self):
         self.relevant_state_predicates = self.get_relevant_state_predicates()
 
@@ -260,13 +261,13 @@ class Database:
         self.neg_effects = samp(self.neg_effects)
         self.update_relevant_state_predicates()
 
-    def syste_noise(self, p_name, prob):
+    def sys_noise(self, p_name, prob):
         def p(pset):
             rep = set()
             for i, val in enumerate(pset):
                 p = random.random()
                 val.arg_types = Predicate.matching_as_variables(self.action, val)
-                nm=val.mln_type()
+                nm = val.mln_type()
                 if val.mln_type() == p_name:
                     if p < prob:
                         rep.add(val)
@@ -350,6 +351,7 @@ class StateInfrence:
     def __init__(self, predicate_file):
         self.predicate_file = predicate_file
         # set of markov logic networks
+        self.action_dbs = dict()
         self.action_mln = dict()
         self.action_weights = dict()
         self.action_rejected_weights = dict()
@@ -360,10 +362,12 @@ class StateInfrence:
         self.method = 'pseudo-log-likelihood'
         self.data_for_graph = dict()
         self.db_run = dict()
+        self.dbs = []
         pass
 
     def process_database(self, db: Database):
-        self._new_action_process(db)
+        self.db = db
+        self._new_action_process()
 
     def update_mln(self):
         print("UPDATING MLN")
@@ -386,12 +390,13 @@ class StateInfrence:
         #     m = self.action_mln[action.name]
         open('tmp_db.mln', 'w').write(self.db.mln_db())
         db = DB.load(m, 'tmp_db.mln')
-
-        res = m.learn(db)
+        self.action_dbs[self.db.action.name].append(db)
+        res = m.learn(self.action_dbs[self.db.action.name])
         # r = MLNQuery(mln=res, db=db[0]).run()
         # prev_weights = list(map(lambda a: a.weight, self.action_weights[self.db.action.name].values()))
 
-        weights_std = center(res.weights)
+        # weights_std = center(res.weights)
+        weights_std = res.weights
         # weights_std = weights_std[:-len(prev_weights)]
         for i, form in enumerate(res.weighted_formulas):
             predicate_key = str(form.children[1])
@@ -435,6 +440,7 @@ class StateInfrence:
         db.action.arg_types = Predicate.matching_as_variables(db.action, db.action)
 
         if db.action.name not in self.action_weights:
+            self.action_dbs[db.action.name] = []
             self.action_weights[db.action.name] = dict()
             self.action_pending_weights[db.action.name] = dict()
             self.action_rejected_weights[db.action.name] = dict()
@@ -454,7 +460,7 @@ class StateInfrence:
         # print(s)
         return s
 
-    def _new_action_process(self, db: Database):
+    def _new_action_process(self):
         """
         Check if the action already exists, add it if it doesn't,
         find all relevant preconditions add them to the mln if there are new ones
@@ -466,7 +472,6 @@ class StateInfrence:
         Returns:
 
         """
-        self.db = db
         self.insert_weights()  # CREATES MLN'S
         self.update_mln()
         self.update_data_for_graph()

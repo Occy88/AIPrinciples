@@ -23,7 +23,7 @@ from problem_convert.PlanTraceGen import Database as DB
 import os
 import random
 
-num_databases = 100
+num_databases = 30
 print("Loading database file: ")
 databases = open(mln_database).read()
 databases = databases.strip('\n').strip(' ').strip('---').split("---")
@@ -44,11 +44,10 @@ opt_tracker = dict()
 for i, d in enumerate(d_processed):
     # systematic noise on move function
     if d.action.name=='move':
-        d.syste_noise('conn(V0,V1,0)',0.2)
+        d.sys_noise('conn(v0,v1,0)',0.6)
     print("=========[ processing db: ", d.action.name, i, '/', len(d_processed), ' ]===========')
     if d.action.name not in opt_tracker:
         opt_tracker[d.action.name] = 1
-    d.noise(0.3)
     print(i / len(d_processed))
     s.process_database(d)
     # s.update_data_for_graph(i)

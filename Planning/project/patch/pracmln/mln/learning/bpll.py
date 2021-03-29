@@ -86,10 +86,15 @@ class BPLL(AbstractLearner):
                 elif sums[validx] is not None:
                     # don't set it if this value has already been assigned marked as inadmissible.
                     sums[validx] += n * w[fidx]
-        expsums = [numpy.exp(s) if s is not None else 0 for s in sums]#numpy.exp(numpy.array(sums))
-        z = sum(expsums)
-        if z == 0: raise SatisfiabilityException('MLN is unsatisfiable: all probability masses of variable %s are zero.' % str(var))
-        return [w_ / z for w_ in expsums]
+        try:
+            expsums = [numpy.exp(s) if s is not None else 0 for s in sums]#numpy.exp(numpy.array(sums))
+            z = sum(expsums)
+            if z == 0: raise SatisfiabilityException('MLN is unsatisfiable: all probability masses of variable %s are zero.' % str(var))
+            re=[w_ / z for w_ in expsums]
+        except Exception as e:
+            print(e)
+            pass
+        return re
 #         sum_max = numpy.max(sums)
 #         sums -= sum_max
 #         expsums = numpy.sum(numpy.exp(sums))

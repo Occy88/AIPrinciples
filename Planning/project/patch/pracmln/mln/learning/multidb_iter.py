@@ -1,7 +1,7 @@
-# 
+#
 #
 # (C) 2011-2015 by Daniel Nyga (nyga@cs.uni-bremen.de)
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
 # "Software"), to deal in the Software without restriction, including
@@ -41,7 +41,6 @@ def _setup_learner(xxx_todo_changeme):
     algo = method(mrf, **params)
     return i, algo
 
-
 class MultipleDatabaseLearner(AbstractLearner):
     '''
     Learns from multiple databases using an arbitrary sub-learning method for
@@ -62,46 +61,28 @@ class MultipleDatabaseLearner(AbstractLearner):
         '''
         self.dbs = dbs
         self._params = edict(params)
+        self.method=method
         if not mln_._materialized:
             self.mln = mln_.materialize(*dbs)
         else:
             self.mln = mln_
         self.watch = StopWatch()
-        self.learners = [None] * len(dbs)
+        self.learners = []
         self.watch.tag('setup learners', verbose=self.verbose)
-        if self.verbose:
-            bar = ProgressBar(steps=len(dbs), color='green')
-        print(self.multicore)
-        if self.multicore:
-            pool = Pool(maxtasksperchild=1)
-            print('Setting up multi-core processing for {} cores'.format(pool._processes))
-            try:
-                for i, learner in pool.imap(with_tracing(_setup_learner), self._iterdbs(method)):
-                    self.learners[i] = learner
-                    if self.verbose:
-                        bar.label('Database %d, %s' % ((i + 1), learner.name))
-                        bar.inc()
-            except Exception as e:
-                logger.error('Error in child process. Terminating pool...')
-                pool.close()
-                raise e
-            finally:
-                pool.terminate()
-                pool.join()
-            # as MLNs and formulas have been copied to the separate processes,
-            # the mln pointers of the formulas now point to the MLNs in these child processes
-            # we have to copy the materialized weight back to our parent process
-            self.mln.weights = list(first(self.learners).mrf.mln.weights)
-        else:
-            for i, db in enumerate(self.dbs):
-                _, learner = _setup_learner((i, self.mln, db, method, self._params + {'multicore': False}))
-                self.learners[i] = learner
-                if self.verbose:
-                    bar.label('Database %d, %s' % ((i + 1), learner.name))
-                    bar.inc()
+
+        for i, db in enumerate(self.dbs):
+            self.insert_db(db)
+            if self.verbose:
+                bar.label('Database %d, %s' % ((i + 1), learner.name))
+                bar.inc()
         if self.verbose:
             print('set up', self.name)
         self.watch.finish('setup learners')
+
+    def insert_db(self,db):
+        i=len(self.learners)
+        _, learner = _setup_learner((i, self.mln, db, self.method, self._params + {'multicore': False}))
+        self.learners.append(learner)
 
     def _iterdbs(self, method):
         for i, db in enumerate(self.dbs):
@@ -113,8 +94,8 @@ class MultipleDatabaseLearner(AbstractLearner):
         return "MultipleDatabaseLearner [{} x {}]".format(len(self.learners), self.learners[0].name)
 
     def _f(self, w):
-        # it turned out that it doesn't pay off to evaluate the function  
-        # in separate processes, so we turn it off 
+        # it turned out that it doesn't pay off to evaluate the function
+        # in separate processes, so we turn it off
         if False:  # self.multicore:
             likelihood = 0
             pool = Pool()
@@ -136,8 +117,8 @@ class MultipleDatabaseLearner(AbstractLearner):
     def _grad(self, w):
         grad = numpy.zeros(len(self.mln.formulas), numpy.float64)
         if False:  # self.multicore:
-            # it turned out that it doesn't pay off to evaluate the gradient  
-            # in separate processes, so we turn it off 
+            # it turned out that it doesn't pay off to evaluate the gradient
+            # in separate processes, so we turn it off
             pool = Pool()
             try:
                 for i, (grad_, d_) in enumerate(pool.imap(with_tracing(_methodcaller('_grad', sideeffects=True)), [(l, w) for l in self.learners])):
@@ -174,28 +155,10 @@ class MultipleDatabaseLearner(AbstractLearner):
         return hessian
 
     def _prepare(self):
-        self.watch.tag('preparing optimization', verbose=self.verbose)
-        if self.verbose:
-            bar = ProgressBar(steps=len(self.dbs), color='green')
-        if self.multicore:
-            pool = Pool(maxtasksperchild=1)
-            try:
-                for i, (_, d_) in enumerate(pool.imap(with_tracing(_methodcaller('_prepare', sideeffects=True)), self.learners)):
-                    checkmem()
-                    self.learners[i].__dict__ = d_
-                    if self.verbose: bar.inc()
-            except Exception as e:
-                logger.error('Error in child process. Terminating pool...')
-                pool.close()
-                raise e
-            finally:
-                pool.terminate()
-                pool.join()
-        else:
-            for learner in self.learners:
-                checkmem()
-                learner._prepare()
-                if self.verbose: bar.inc()
+        learner=self.learners[-1]
+        checkmem()
+        learner._prepare()
+        if self.verbose: bar.inc()
 
     def _filter_fixweights(self, v):
         '''
@@ -234,5 +197,3 @@ class MultipleDatabaseLearner(AbstractLearner):
             runs += 1
             if not any([l.repeat() for l in self.learners]): break
         return self.weights
-
-

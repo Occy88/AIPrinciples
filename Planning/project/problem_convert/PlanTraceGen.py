@@ -270,6 +270,7 @@ class Database:
                 nm = val.mln_type()
                 if val.mln_type() == p_name:
                     if p < prob:
+                        print("ADDED - (System noise)")
                         rep.add(val)
                 else:
                     rep.add(val)
@@ -378,20 +379,38 @@ class StateInfrence:
         weights = self.gen_weights(action)
         open('tmp.mln', 'w').write(predicates + weights)
         if action.name in self.action_mln:
-            m1 = MLN(self.logic, self.grammar, mlnfile='tmp.mln')
             m=self.action_mln[action.name]
-            m.predicates=m1.predicates
+            existing_weights=set()
+            print(m.predicates)
+            print("M flength: ",print(len(m.formulas)))
+            print(self._unmodified_predicates)
+            for i, form in enumerate(m.weighted_formulas):
+                predicate_key = str(form.children[1])
+                existing_weights.add(predicate_key)
+            for k, w in self.action_weights[action.name].items():
+                form_name=w.mln_type()
+                if form_name not in existing_weights:
+                    existing_weights.add(form_name)
+                    m.formula(action.mln_type()+' => '+form_name)
+            m_parse = MLN(self.logic, self.grammar, mlnfile='tmp.mln')
 
+            print(len(m.weights),len(m.formulas))
 
         else:
             m = MLN(self.logic, self.grammar, mlnfile='tmp.mln')
+            m_parse=m
+            self._unmodified_predicates=m.predicates
 
         # m.weights[1]=1
         # m.weights[2]=10
         # else:
         #     m = self.action_mln[action.name]
         open('tmp_db.mln', 'w').write(self.db.mln_db())
-        db = DB.load(m, 'tmp_db.mln')
+        try:
+            db = DB.load(m, 'tmp_db.mln')
+        except Exception as e:
+            db=DB.load(m_parse,'tmp_db.mln')
+            print(e)
         self.action_dbs[self.db.action.name].append(db)
         res = m.learn_iter(db)
         # r = MLNQuery(mln=res, db=db[0]).run()
@@ -399,6 +418,8 @@ class StateInfrence:
 
         # weights_std = center(res.weights)
         weights_std = res.weights
+        print(weights_std)
+        res.write()
         # weights_std = weights_std[:-len(prev_weights)]
         for i, form in enumerate(res.weighted_formulas):
             predicate_key = str(form.children[1])
@@ -558,9 +579,9 @@ def update_mln():
     db_both = DB.load(m, '../tmp_db3.mln')
     db_1 = DB.load(m, '../tmp_db1.mln')
     db_2 = DB.load(m, '../tmp_db2.mln')
-    a = m.learn(db_both)
-    print(a.weights)
-    b = m.learn_iter(db_1)
+    # a = m.learn(db_both)
+    # print(a.weights)
+    # b = m.learn_iter(db_1)
     c = m.learn_iter(db_2)
     print("target: ",
           [5.3619451781468195, 2.8782336808825564, -0.7494174682462591, 3.793552188739899, 3.5295832607294213,

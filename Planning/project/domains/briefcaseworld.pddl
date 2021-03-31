@@ -1,4 +1,4 @@
-(define (domain briefcase)
+(define (domain gridworld)
 (:requirements :adl)
 (:types portable location)
 (:predicates (at ?y - portable ?x - location)
@@ -10,8 +10,11 @@
   :parameters (?m ?l - location)
   :precondition  (is-at ?m)
   :effect (and (is-at ?l) (not (is-at ?m))
-		    (forall (?x - portable) (when (in ?x)
-		      (and (at ?x ?l) (not (at ?x ?m)))))))
+		    (forall (?x - portable)
+		        (when (in ?x)
+		            (and (at ?x ?l) (not (at ?x ?m)))
+		        )
+		      )))
 
   (:action take-out
       :parameters (?x - portable)

@@ -1,0 +1,51 @@
+
+
+task contains conditional effects. turning off state domination.
+
+ --- OK.
+ Match tree built with 19 nodes.
+
+PDDL problem description loaded:
+	Domain: GRIDWORLD
+	Problem: TEST
+	#Actions: 19
+	#Fluents: 66
+Landmarks found: 23
+Starting search with IW (time budget is 60 secs)...
+rel_plan size: 23
+#RP_fluents 38
+Caption
+{#goals, #UNnachieved,  #Achieved} -> IW(max_w)
+
+{23/23/0}:IW(1) -> [2]rel_plan size: 18
+#RP_fluents 35
+{23/18/5}:IW(1) -> [2]rel_plan size: 12
+#RP_fluents 33
+{23/12/11}:IW(1) -> [2]rel_plan size: 10
+#RP_fluents 30
+{23/10/13}:IW(1) -> [2]rel_plan size: 6
+#RP_fluents 26
+{23/6/17}:IW(1) -> [2][3];; NOT I-REACHABLE ;;
+Total time: -2.08616e-10
+Nodes generated during search: 17
+Nodes expanded during search: 11
+IW search completed
+Starting search with BFS(novel,land,h_add)...
+--[4294967295 / 26]--
+--[6 / 26]--
+--[6 / 20]--
+--[6 / 19]--
+--[6 / 17]--
+--[6 / 12]--
+--[6 / 9]--
+--[6 / 8]--
+--[6 / 6]--
+--[6 / 5]--
+--[6 / 4]--
+--[6 / 2]--
+--[6 / 0]--
+Total time: 0.004
+Nodes generated during search: 255
+Nodes expanded during search: 78
+Plan found with cost: 6
+BFS search completed

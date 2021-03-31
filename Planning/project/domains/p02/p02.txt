@@ -1,0 +1,41 @@
+I could not get fast-downward to work, it wasn't finding plans for some reason
+so I used the editor.planning.domains for evaluation
+bellow is the output.
+
+A screenshot of the plan found is provided
+
+task contains conditional effects. turning off state domination.
+
+ --- OK.
+ Match tree built with 20 nodes.
+
+PDDL problem description loaded:
+	Domain: GRIDWORLD
+	Problem: TEST
+	#Actions: 20
+	#Fluents: 64
+Landmarks found: 24
+Starting search with IW (time budget is 60 secs)...
+rel_plan size: 23
+#RP_fluents 36
+Caption
+{#goals, #UNnachieved,  #Achieved} -> IW(max_w)
+
+{24/1/0}:IW(1) -> rel_plan size: 23
+#RP_fluents 36
+{24/23/1}:IW(1) -> [2]rel_plan size: 17
+#RP_fluents 30
+{24/17/7}:IW(1) -> [2]rel_plan size: 12
+#RP_fluents 28
+{24/12/12}:IW(1) -> [2]rel_plan size: 9
+#RP_fluents 23
+{24/9/15}:IW(1) -> [2]rel_plan size: 7
+#RP_fluents 14
+{24/7/17}:IW(1) -> [2]rel_plan size: 3
+#RP_fluents 10
+{24/3/21}:IW(1) -> [2]rel_plan size: 0
+#RP_fluents 0Plan found with cost: 6
+Total time: -3.7998e-10
+Nodes generated during search: 13
+Nodes expanded during search: 6
+IW search completed

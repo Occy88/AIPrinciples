@@ -23,7 +23,7 @@ from problem_convert.PlanTraceGen import Database as DB
 import os
 import random
 
-num_databases = 30
+num_databases = 50
 print("Loading database file: ")
 databases = open(mln_database).read()
 databases = databases.strip('\n').strip(' ').strip('---').split("---")
@@ -51,7 +51,8 @@ for i, d in enumerate(d_processed):
             d.sys_noise('conn(v0,v1,0)',0.7)
 
     else:
-        continue
+        # continue
+        pass
     print("=========[ processing db: ", d.action.name, i, '/', len(d_processed), ' ]===========')
 
     print(i / len(d_processed))

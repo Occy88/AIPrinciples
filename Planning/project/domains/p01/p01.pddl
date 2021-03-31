@@ -141,4 +141,28 @@
 (value x1 y3 v2)
 (value x3 y3 v2)
 
+(lit x0 y0)
+(lit x2 y0)
+(lit x3 y0)
+(lit x4 y0)
+
+(lit x0 y1)
+(lit x2 y1)
+
+(lit x0 y2)
+(lit x1 y2)
+(lit x2 y2)
+(lit x3 y2)
+(lit x4 y2)
+
+(lit x0 y3)
+(lit x2 y3)
+(lit x4 y3)
+
+(lit x0 y4)
+(lit x1 y4)
+(lit x2 y4)
+(lit x3 y4)
+(lit x4 y4)
+
 )))

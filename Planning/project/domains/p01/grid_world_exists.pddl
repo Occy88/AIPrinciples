@@ -53,9 +53,9 @@
                         (not
                             (or
                             ; cells on the right
-                            (forall (?x2 -x) (and (gx ?x2 ?x1) (gx ?x ?x2) (not(black ?x2 ?y))) )
+                            (exists (?x2 -x) (and (gx ?x2 ?x1) (gx ?x ?x2) (black ?x2 ?y)) )
                             ;cells on the left
-                            (forall (?x2 -x) (and (gx ?x1 ?x2) (gx ?x2 ?x) (not(black ?x2 ?y))) )
+                            (exists (?x2 -x) (and (gx ?x1 ?x2) (gx ?x2 ?x) (black ?x2 ?y)) )
                             )
                         )
                     )
@@ -70,8 +70,8 @@
                         (not (black ?x ?y1))
                         (not
                             (or
-                            (forall (?y2 -y) (and (gy ?y2 ?y1) (gy ?y ?y2) (not(black ?x ?y2))) )
-                            (forall (?y2 -y) (and (gy ?y1 ?y2) (gy ?y2 ?y) (not(black ?x ?y2))) )
+                            (exists (?y2 -y) (and (gy ?y2 ?y1) (gy ?y ?y2) (black ?x ?y2)) )
+                            (exists (?y2 -y) (and (gy ?y1 ?y2) (gy ?y2 ?y) (black ?x ?y2)) )
                             )
                         )
                     )

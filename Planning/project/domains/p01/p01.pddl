@@ -1,8 +1,8 @@
 (define (problem test)
 (:domain GRIDWORLD)
 (:objects
-    x0 x1 x2 x3 x4 - x
-    y0 y1 y2 y3 y4 - y
+    x0 x1 x2 x3 x4 - xc
+    y0 y1 y2 y3 y4 - yc
     v0 v1 v2 v3 v4 - v
 
 )

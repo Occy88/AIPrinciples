@@ -1,0 +1,6 @@
+(place-bulb x2 y1)
+(place-bulb x3 y2)
+(place-bulb x0 y3)
+(place-bulb x1 y4)
+(place-bulb x4 y0)
+(place-bulb x4 y3)

@@ -61,7 +61,6 @@
                     )
                     (and (lit ?x1 ?y))
                 )
-
             )
             ; take care of vertical light rays (copy of horizontal hence no comments)
             (forall (?y1 - y)

@@ -1,5 +1,6 @@
 (define (domain gridworld)
     (:requirements :adl  :conditional-effects )
+
     (:types
         x ; x coordinates
         y ; y coords

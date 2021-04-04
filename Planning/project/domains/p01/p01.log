@@ -1,0 +1,123 @@
+*** processed args: Namespace(alias=None, build='release32', components=['translate', 'preprocess', 'search'], filenames=['../../domains/p01/grid_world_exists.pddl', '../../domains/p01/p01.pddl'], plan_file='sas_plan', planner_args=['../../domains/p01/grid_world_exists.pddl', '../../domains/p01/p01.pddl', '--search', 'wastar(blind(),w=1)'], preprocess=False, preprocess_input='output.sas', preprocess_options=[], run_all=False, run_search=False, search_input='output', search_options=['--search', 'wastar(blind(),w=1)'], show_aliases=False, translate=False, translate_inputs=['../../domains/p01/grid_world_exists.pddl', '../../domains/p01/p01.pddl'], translate_options=[])
+INFO     Running translator.
+INFO     callstring: /home/c4r4mel/PycharmProjects/AIPrinciples/Planning/project/venv/bin/python /home/c4r4mel/PycharmProjects/AIPrinciples/Planning/project/solver/fd-stripped/builds/release32/bin/translate/translate.py ../../domains/p01/grid_world_exists.pddl ../../domains/p01/p01.pddl
+Parsing...
+Parsing: [0.000s CPU, 0.001s wall-clock]
+Normalizing task... [0.000s CPU, 0.000s wall-clock]
+Instantiating...
+Generating Datalog program... [0.000s CPU, 0.001s wall-clock]
+Normalizing Datalog program...
+Unbound effect variables: Adding @object predicate.
+Normalizing Datalog program: [0.000s CPU, 0.001s wall-clock]
+Preparing model... [0.000s CPU, 0.001s wall-clock]
+Generated 43 rules.
+Computing model... [0.010s CPU, 0.005s wall-clock]
+453 relevant atoms
+307 auxiliary atoms
+760 final queue length
+2897 total queue pushes
+Completing instantiation... [0.050s CPU, 0.060s wall-clock]
+Instantiating: [0.060s CPU, 0.068s wall-clock]
+Computing fact groups...
+Finding invariants...
+7 initial candidates
+Finding invariants: [0.010s CPU, 0.001s wall-clock]
+Checking invariant weight... [0.000s CPU, 0.000s wall-clock]
+Instantiating groups... [0.000s CPU, 0.000s wall-clock]
+Collecting mutex groups... [0.000s CPU, 0.000s wall-clock]
+Choosing groups...
+197 uncovered facts
+Choosing groups: [0.000s CPU, 0.000s wall-clock]
+Building translation key... [0.000s CPU, 0.000s wall-clock]
+Computing fact groups: [0.010s CPU, 0.002s wall-clock]
+Building STRIPS to SAS dictionary... [0.000s CPU, 0.000s wall-clock]
+Building dictionary for full mutex groups... [0.000s CPU, 0.000s wall-clock]
+Building mutex information...
+Building mutex information: [0.000s CPU, 0.000s wall-clock]
+Translating task...
+Processing axioms...
+Simplifying axioms... [0.000s CPU, 0.000s wall-clock]
+Processing axioms: [0.000s CPU, 0.000s wall-clock]
+Translating task: [0.000s CPU, 0.003s wall-clock]
+75 effect conditions simplified
+0 implied preconditions added
+Detecting unreachable propositions...
+0 operators removed
+316 propositions removed
+Detecting unreachable propositions: [0.000s CPU, 0.001s wall-clock]
+Translator variables: 39
+Translator derived variables: 0
+Translator facts: 78
+Translator goal facts: 23
+Translator mutex groups: 0
+Translator total mutex groups size: 0
+Translator operators: 19
+Translator axioms: 0
+Translator task size: 499
+Translator peak memory: 21856 KB
+Writing output... [0.000s CPU, 0.001s wall-clock]
+Done! [0.070s CPU, 0.076s wall-clock]
+INFO     Running preprocessor (release32).
+INFO     callstring: /home/c4r4mel/PycharmProjects/AIPrinciples/Planning/project/solver/fd-stripped/builds/release32/bin/preprocess < output.sas
+Building causal graph...
+The causal graph is not acyclic.
+30 variables of 39 necessary
+0 of 0 mutex groups necessary.
+19 of 19 operators necessary.
+0 of 0 axiom rules necessary.
+Building domain transition graphs...
+solveable in poly time 0
+Building successor generator...
+Preprocessor facts: 60
+Preprocessor derived variables: 0
+Preprocessor task size: 376
+Writing output...
+done
+
+INFO     Running search (release32).
+INFO     search executable: /home/c4r4mel/PycharmProjects/AIPrinciples/Planning/project/solver/fd-stripped/builds/release32/bin/downward
+INFO     callstring: /home/c4r4mel/PycharmProjects/AIPrinciples/Planning/project/solver/fd-stripped/builds/release32/bin/downward --search 'wastar(blind(),w=1)' --plan-file sas_plan < output
+reading input... [t=0s]
+Simplifying transitions... done!
+done reading input! [t=0s]
+building causal graph...done! [t=0s]
+packing state variables...Variables: 30
+Bytes per state: 4
+done! [t=0s]
+done initalizing global data [t=0s]
+Conducting best first search with reopening closed nodes, (real) bound = 2147483647
+Initializing blind heuristic...
+f = 1 [1 evaluated, 0 expanded, t=0s, 6236 KB]
+Best heuristic value: 1 [g=0, 1 evaluated, 0 expanded, t=0s, 6236 KB]
+f = 2 [20 evaluated, 1 expanded, t=0s, 6236 KB]
+f = 3 [142 evaluated, 20 expanded, t=0s, 6236 KB]
+f = 4 [470 evaluated, 142 expanded, t=0s, 6236 KB]
+f = 5 [851 evaluated, 470 expanded, t=0s, 6236 KB]
+f = 6 [1045 evaluated, 851 expanded, t=0s, 6236 KB]
+FOUND The GOAL
+Solution found!
+Actual search time: 0s [t=0s]
+place-bulb x0 y3 (1)
+place-bulb x1 y4 (1)
+place-bulb x2 y1 (1)
+place-bulb x3 y2 (1)
+place-bulb x4 y0 (1)
+place-bulb x4 y3 (1)
+Plan length: 6 step(s).
+Plan cost: 6
+Initial state h value: 1.
+Expanded 997 state(s).
+Reopened 0 state(s).
+Evaluated 1075 state(s).
+Evaluations: 1075
+Generated 4450 state(s).
+Dead ends: 0 state(s).
+Expanded until last jump: 851 state(s).
+Reopened until last jump: 0 state(s).
+Evaluated until last jump: 1045 state(s).
+Generated until last jump: 4278 state(s).
+Number of registered states: 1075
+Search time: 0s
+Total time: 0s
+Solution found.
+Peak memory: 6236 KB

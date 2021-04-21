@@ -290,10 +290,10 @@ class Database:
         s = set()
         for p in chain(self.state, self.pos_effects, self.neg_effects):
             # TODO exclusion should not be limited to on? thi is to be discussed
-            s.add(p)
-            # if len(self.action.arg_set.intersection(p.arg_set)) > 0 and len(
-            #         p.arg_set.difference(self.action.arg_set)) < 2:
-            #     s.add(p)
+            # s.add(p)
+            if len(self.action.arg_set.intersection(p.arg_set)) > 0 and len(
+                    p.arg_set.difference(self.action.arg_set)) < 2:
+                s.add(p)
 
         return s
 
@@ -378,27 +378,25 @@ class StateInfrence:
         predicates = open(self.predicate_file).read() + "\n\n// formulas: \n"
         weights = self.gen_weights(action)
         open('tmp.mln', 'w').write(predicates + weights)
-        # if action.name in self.action_mln:
-        #     m=self.action_mln[action.name]
-        #     existing_weights=set()
-        #     print(m.predicates)
-        #     print("M flength: ",print(len(m.formulas)))
-        #     print(self._unmodified_predicates)
-        #     for i, form in enumerate(m.weighted_formulas):
-        #         predicate_key = str(form.children[1])
-        #         existing_weights.add(predicate_key)
-        #     for k, w in self.action_weights[action.name].items():
-        #         form_name=w.mln_type()
-        #         if form_name not in existing_weights:
-        #             existing_weights.add(form_name)
-        #             m.formula(action.mln_type()+' => '+form_name)
-        #     m_parse = MLN(self.logic, self.grammar, mlnfile='tmp.mln')
-        #
-        #     print(len(m.weights),len(m.formulas))
-        #
-        # else:
-        m = MLN(self.logic, self.grammar, mlnfile='tmp.mln')
-        m_parse=m
+        if action.name in self.action_mln:
+            m=self.action_mln[action.name]
+            existing_weights=set()
+            print(m.predicates)
+            print("M length: ",print(len(m.formulas)))
+            print(self._unmodified_predicates)
+            for i, form in enumerate(m.weighted_formulas):
+                predicate_key = str(form.children[1])
+                existing_weights.add(predicate_key)
+            for k, w in self.action_weights[action.name].items():
+                form_name=w.mln_type()
+                if form_name not in existing_weights:
+                    existing_weights.add(form_name)
+                    m.formula(action.mln_type()+' => '+form_name)
+            m_parse = MLN(self.logic, self.grammar, mlnfile='tmp.mln')
+            print(len(m.weights),len(m.formulas))
+        else:
+            m = MLN(self.logic, self.grammar, mlnfile='tmp.mln')
+            m_parse=m
         self._unmodified_predicates=m.predicates
 
         # m.weights[1]=1

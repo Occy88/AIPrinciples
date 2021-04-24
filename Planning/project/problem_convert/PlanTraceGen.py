@@ -426,7 +426,7 @@ class StateInfrence:
         for i, form in enumerate(res.weighted_formulas):
             predicate_key = str(form.children[1])
             # self.action_weights[self.db.action.name][predicate_key].weight += res.weights[i]
-            self.action_weights[self.db.action.name][predicate_key].weight = res.weights[i]
+            self.action_weights[self.db.action.name][predicate_key].weight += res.weights[i]
             # res.weights[i] += self.action_weights[self.db.action.name][predicate_key].weight
 
         # print(res.weights)

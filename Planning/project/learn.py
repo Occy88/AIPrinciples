@@ -49,13 +49,13 @@ for i, d in enumerate(d_processed):
         opt_tracker[d.action.name] = 0
     # systematic noise on move function
     # if d.action.name == 'move' :
-    if opt_tracker[d.action.name]>=1:
-            d.noise(0.7)
-            # d.sys_noise('conn(v0,v1,0)',0.7)
-
-    else:
-        # continue
-        pass
+    # if opt_tracker[d.action.name]>=1:
+    #         d.noise(0.7)
+    #         # d.sys_noise('conn(v0,v1,0)',0.7)
+    #
+    # else:
+    #     # continue
+    #     pass
 
     print("=========[ processing db: ", d.action.name, i, '/', len(d_processed), ' ]===========')
     print(i / len(d_processed))

@@ -255,8 +255,10 @@ class Database:
 
         def samp(plist):
             return random.sample(plist, p(plist))
-
+        print("=========[ noise: ]==============")
+        print(len(self.state))
         self.state = samp(self.state)
+        print(len(self.state))
         self.pos_effects = samp(self.pos_effects)
         self.neg_effects = samp(self.neg_effects)
         self.update_relevant_state_predicates()

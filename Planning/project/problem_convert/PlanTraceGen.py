@@ -379,27 +379,25 @@ class StateInfrence:
         weights = self.gen_weights(action)
         open('tmp.mln', 'w').write(predicates + weights)
         if action.name in self.action_mln:
-            m = self.action_mln[action.name]
-            existing_weights = set()
+            m=self.action_mln[action.name]
+            existing_weights=set()
             print(m.predicates)
-            print("M flength: ", print(len(m.formulas)))
+            print("M length: ",print(len(m.formulas)))
             print(self._unmodified_predicates)
             for i, form in enumerate(m.weighted_formulas):
                 predicate_key = str(form.children[1])
                 existing_weights.add(predicate_key)
             for k, w in self.action_weights[action.name].items():
-                form_name = w.mln_type()
+                form_name=w.mln_type()
                 if form_name not in existing_weights:
                     existing_weights.add(form_name)
-                    m.formula(action.mln_type() + ' => ' + form_name)
+                    m.formula(action.mln_type()+' => '+form_name)
             m_parse = MLN(self.logic, self.grammar, mlnfile='tmp.mln')
-
-            print(len(m.weights), len(m.formulas))
-
+            print(len(m.weights),len(m.formulas))
         else:
             m = MLN(self.logic, self.grammar, mlnfile='tmp.mln')
-            m_parse = m
-        self._unmodified_predicates = m.predicates
+            m_parse=m
+        self._unmodified_predicates=m.predicates
 
         # m.weights[1]=1
         # m.weights[2]=10
@@ -409,7 +407,7 @@ class StateInfrence:
         try:
             db = DB.load(m, 'tmp_db.mln')
         except Exception as e:
-            db = DB.load(m_parse, 'tmp_db.mln')
+            db=DB.load(m_parse,'tmp_db.mln')
             print(e)
         self.action_dbs[self.db.action.name].append(db)
         res = m.learn(db)
@@ -423,7 +421,7 @@ class StateInfrence:
         # weights_std = weights_std[:-len(prev_weights)]
         for i, form in enumerate(res.weighted_formulas):
             predicate_key = str(form.children[1])
-            self.action_weights[self.db.action.name][predicate_key].weight += res.weights[i]
+            self.action_weights[self.db.action.name][predicate_key].weight +=res.weights[i]
             # res.weights[i] += self.action_weights[self.db.action.name][predicate_key].weight
 
         # print(res.weights)
@@ -587,7 +585,8 @@ def update_mln():
           [5.3619451781468195, 2.8782336808825564, -0.7494174682462591, 3.793552188739899, 3.5295832607294213,
            13.918149709704712, 2.878233680882602, 13.918149709704519, 5.884279775032551]
           )
-    print("value: ", c.weights)
+    print("value: ",c.weights)
+
 
 # update_mln()
 # action_dbs[self.db.action.name].append(db)

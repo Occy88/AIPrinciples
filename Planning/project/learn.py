@@ -23,7 +23,7 @@ from problem_convert.PlanTraceGen import Database as DB
 import os
 import random
 
-num_databases = 50
+num_databases = 25
 print("Loading database file: ")
 databases = open(mln_database).read()
 databases = databases.strip('\n').strip(' ').strip('---').split("---")
@@ -43,28 +43,32 @@ s = StateInfrence(os.getcwd() + '/' + domain + '_p_decs.txt')
 print("Initiating learning:")
 opt_tracker = dict()
 for i, d in enumerate(d_processed):
+    if d.action.name=='unlock':
+        continue
     if d.action.name not in opt_tracker:
         opt_tracker[d.action.name] = 0
     # systematic noise on move function
     if d.action.name == 'move' :
         if opt_tracker[d.action.name]>=1:
-            d.sys_noise('conn(v0,v1,0)',0.7)
+                # d.noise(0.3)
+                d.sys_noise('conn(v0,v1,0)',0.5)
 
     else:
-        # continue
-        pass
-    print("=========[ processing db: ", d.action.name, i, '/', len(d_processed), ' ]===========')
+        continue
+    #     pass
 
+    print("=========[ processing db: ", d.action.name, i, '/', len(d_processed), ' ]===========')
     print(i / len(d_processed))
     s.process_database(d)
+
     # s.update_data_for_graph(i)
     # if opt_tracker[d.action.name] % 5 and not opt_tracker[d.action.name] == 0:
     #     s.prune_weights(d.action.name,2)
     opt_tracker[d.action.name] += 1
-s.save_data_for_graphing()
+    s.save_data_for_graphing()
 s = StateInfrence(os.getcwd() + '/' + domain + '_p_decs.txt')
 
-s.plot()
+StateInfrence.plot()
 # m.prin
 print("writing results")
 # for k in iter(s.action_weights):

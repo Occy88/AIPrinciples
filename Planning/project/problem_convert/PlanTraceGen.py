@@ -255,8 +255,10 @@ class Database:
 
         def samp(plist):
             return random.sample(plist, p(plist))
-
+        print("=========[ noise: ]==============")
+        print(len(self.state))
         self.state = samp(self.state)
+        print(len(self.state))
         self.pos_effects = samp(self.pos_effects)
         self.neg_effects = samp(self.neg_effects)
         self.update_relevant_state_predicates()
@@ -377,27 +379,29 @@ class StateInfrence:
 
         predicates = open(self.predicate_file).read() + "\n\n// formulas: \n"
         weights = self.gen_weights(action)
-        open('tmp.mln', 'w').write(predicates + weights)
+        f=open('tmp.mln', 'w')
+        f.write(predicates + weights)
+        f.close()
         if action.name in self.action_mln:
-            m=self.action_mln[action.name]
-            existing_weights=set()
+            m = self.action_mln[action.name]
+            existing_weights = set()
             print(m.predicates)
-            print("M length: ",print(len(m.formulas)))
+            print("M length: ", print(len(m.formulas)))
             print(self._unmodified_predicates)
             for i, form in enumerate(m.weighted_formulas):
                 predicate_key = str(form.children[1])
                 existing_weights.add(predicate_key)
             for k, w in self.action_weights[action.name].items():
-                form_name=w.mln_type()
+                form_name = w.mln_type()
                 if form_name not in existing_weights:
                     existing_weights.add(form_name)
-                    m.formula(action.mln_type()+' => '+form_name)
+                    m.formula(action.mln_type() + ' => ' + form_name)
             m_parse = MLN(self.logic, self.grammar, mlnfile='tmp.mln')
-            print(len(m.weights),len(m.formulas))
+            print(len(m.weights), len(m.formulas))
         else:
             m = MLN(self.logic, self.grammar, mlnfile='tmp.mln')
-            m_parse=m
-        self._unmodified_predicates=m.predicates
+            m_parse = m
+            self._unmodified_predicates = m.predicates
 
         # m.weights[1]=1
         # m.weights[2]=10
@@ -407,10 +411,12 @@ class StateInfrence:
         try:
             db = DB.load(m, 'tmp_db.mln')
         except Exception as e:
-            db=DB.load(m_parse,'tmp_db.mln')
+            db = DB.load(m_parse, 'tmp_db.mln')
             print(e)
+        print(db[0].evidence)
+
         self.action_dbs[self.db.action.name].append(db)
-        res = m.learn(db)
+        res = m.learn_iter(db)
         # r = MLNQuery(mln=res, db=db[0]).run()
         # prev_weights = list(map(lambda a: a.weight, self.action_weights[self.db.action.name].values()))
 
@@ -421,7 +427,8 @@ class StateInfrence:
         # weights_std = weights_std[:-len(prev_weights)]
         for i, form in enumerate(res.weighted_formulas):
             predicate_key = str(form.children[1])
-            self.action_weights[self.db.action.name][predicate_key].weight +=res.weights[i]
+            # self.action_weights[self.db.action.name][predicate_key].weight += res.weights[i]
+            self.action_weights[self.db.action.name][predicate_key].weight = res.weights[i]
             # res.weights[i] += self.action_weights[self.db.action.name][predicate_key].weight
 
         # print(res.weights)
@@ -536,14 +543,16 @@ class StateInfrence:
         f = open('graph_data', 'w+')
         f.write(json.dumps(self.data_for_graph))
 
-    def count_nan(self, li):
+    @staticmethod
+    def count_nan(li):
         t = 0
         for v in li:
             if np.isnan(v):
                 t += 1
         return t
 
-    def plot(self):
+    @staticmethod
+    def plot():
         d = json.loads(open('graph_data', 'r').read())
         print(d)
         for k in d:
@@ -552,14 +561,14 @@ class StateInfrence:
                 if len(val) > 100:
                     print("-----------------")
                     print(len(val), key)
-                label = key if self.count_nan(val) < len(val) * 0.5 else None
+                label = key if StateInfrence.count_nan(val) < len(val) * 0.5 else None
                 plt.plot(list(range(0, len(val))), val, 'o-', label=label)
                 # break
             plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', fontsize='xx-small')
             print(k)
             plt.title(k)
             plt.subplots_adjust(right=0.7, top=0.8)
-            plt.savefig('graph.png', dpi=600)
+            plt.savefig(k+'graph.png', dpi=600)
             plt.show()
             # break
 
@@ -585,8 +594,7 @@ def update_mln():
           [5.3619451781468195, 2.8782336808825564, -0.7494174682462591, 3.793552188739899, 3.5295832607294213,
            13.918149709704712, 2.878233680882602, 13.918149709704519, 5.884279775032551]
           )
-    print("value: ",c.weights)
-
+    print("value: ", c.weights)
 
 # update_mln()
 # action_dbs[self.db.action.name].append(db)
